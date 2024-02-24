@@ -61,6 +61,6 @@ build/
 hs_err_pid*
 
 # generated certificates
-test-certificates/*/*
-!test-certificates/generate-certificate.sh
-!test-certificates/SignFile.java
+/test-certificates/*
+!/test-certificates/generate-certificate.sh
+!/test-certificates/SignFile.java
