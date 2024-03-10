@@ -7,12 +7,8 @@ public class ExampleTest {
 
   @Test
   public void example1() {
-    Tenant clinic = new Tenant("Bucharest Central Clinic");
-    User patient = new User("John Doe", clinic);
+    new BasicPolicyCollection();
 
-
-
-    //PolicyEvaluator.evaluate();
 
   }
 

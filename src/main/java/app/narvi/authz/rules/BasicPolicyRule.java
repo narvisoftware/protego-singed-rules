@@ -4,11 +4,11 @@ import app.narvi.authz.Action;
 import app.narvi.authz.Permission;
 import app.narvi.authz.PolicyRule;
 
-public abstract class BasicPolicyRule<PR, A> implements PolicyRule {
-  private Object protectedResource;
-  private Action action;
+public abstract class BasicPolicyRule implements PolicyRule {
 
-  public BasicPolicyRule(Permission<PR, A> permission) {
-
+  public Decision evaluate(Permission permission) {
+    return Decision.NOT_APPLICABLE;
   }
+
+
 }

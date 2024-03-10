@@ -5,12 +5,13 @@ import app.narvi.authz.rules.BasicPolicyRule;
 
 public class AllowOwnTenantAccess extends BasicPolicyRule {
 
-  public AllowOwnTenantAccess(Permission permission) {
-    super(permission);
-  }
 
   @Override
-  public Decision evaluate() {
+  public Decision evaluate(Permission permission) {
     return Decision.NOT_APPLICABLE;
+  }
+
+  public String getSignature() {
+    return "fVSvJxxUR7MXujnPt/iPyr46/ZIh0KTIt94ZqEhvdekJ3s9H6FU05bNOVF325C6P2Me1tM71ssw4JeEfFI99IA==";
   }
 }

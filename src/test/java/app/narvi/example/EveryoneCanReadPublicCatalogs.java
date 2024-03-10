@@ -5,12 +5,12 @@ import app.narvi.authz.rules.BasicPolicyRule;
 
 public class EveryoneCanReadPublicCatalogs extends BasicPolicyRule {
 
-  public EveryoneCanReadPublicCatalogs(Permission permission) {
-    super(permission);
+  @Override
+  public Decision evaluate(Permission permission) {
+    return Decision.NOT_APPLICABLE;
   }
 
-  @Override
-  public Decision evaluate() {
-    return Decision.NOT_APPLICABLE;
+  public String getSignature() {
+    return "HNZV4cw1uuUtqWvrXrL3N13qSzVG9YIXz1nWH8+7HL7QoIbVBOPpdu4rYgTYEtAcsLnXO2M2JOPD1eAg4bjYmA==";
   }
 }
