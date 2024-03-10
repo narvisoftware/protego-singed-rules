@@ -17,7 +17,7 @@ public class PKCS8RSASigner {
 
   private static final String SHA1_WITH_RSA = "SHA1withRSA";
   private static final String SUN_JSSE = "SunJSSE";
-  private static final String RSA = "RSA";
+  private static final String  RSA = "RSA";
 
   private static final char HEX_DIGIT [] = {
       '0', '1', '2', '3', '4', '5', '6', '7',
@@ -27,7 +27,7 @@ public class PKCS8RSASigner {
   private File pkcsKeyFile_;
   private byte [] keyFileBytes_;
   private Signature dsa_;
-  private KeyFactory keyFactory_;
+    private KeyFactory keyFactory_;
   private PrivateKey privateKey_;
 
   public PKCS8RSASigner ( File pkcsKeyFile ) {

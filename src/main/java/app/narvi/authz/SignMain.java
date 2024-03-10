@@ -61,10 +61,14 @@ public class SignMain {
 
       init();
 
-      System.out.println(
-          toHex(getSignature(
-              "app.narvi.example.AllowOwnTenantAccess".getBytes( UTF_8 ) )
-          ).toUpperCase()
+//      System.out.println(
+//          toHex(getSignature(
+//              "app.narvi.example.AllowOwnTenantAccess".getBytes( UTF_8 ) )
+//          ).toUpperCase()
+//      );
+      System.out.println("--;"+
+          Base64.getEncoder().encodeToString(getSignature(
+              "app.narvi.example.AllowOwnTenantAccess".getBytes( UTF_8 )))
       );
 
     } catch ( Exception e ) {

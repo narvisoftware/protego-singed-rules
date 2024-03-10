@@ -2,6 +2,7 @@ package app.narvi.authz;
 
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
@@ -30,15 +31,29 @@ public class VerifySignature {
 
     X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(publicKeyBytes);
 
-    KeyFactory keyFactory = KeyFactory.getInstance("DSA", "SUN");
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
     PublicKey pubKey =keyFactory.generatePublic(pubKeySpec);
 
-    Signature sig = Signature.getInstance("SHA1withDSA", "SUN");
+    Signature sig = Signature.getInstance("SHA1withRSA");
 
     sig.initVerify(pubKey);
 
-    byte[] sigToVerify = Base64.getDecoder().decode("AEDDD22B68EE079A4460A5A1D2657264EC21EB3ED140B591952635FCD6CB80DA558553CB26B7C297335515B6E448425DC239B84740D2C3EE19F3279FF3B40E44");
+    String signature= "rt3SK2juB5pEYKWh0mVyZOwh6z7RQLWRlSY1/NbLgNpVhVPLJrfClzNVFbbkSEJdwjm4R0DSw+4Z8yef87QORA==";
 
+    byte[] sigToVerify = Base64.getDecoder().decode(signature);
+
+    byte[] dataBytes = Base64.getEncoder().encode("app.narvi.example.AllowOwnTenantAccess".getBytes(StandardCharsets.UTF_8));
+    //dataBytes = Base64.getDecoder().decode(dataBytes);
+
+    MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+    crypt.reset();
+    crypt.update("app.narvi.example.AllowOwnTenantAccess".getBytes("UTF-8"));
+
+    String digest = Base64.getEncoder().encodeToString(crypt.digest());
+    byte[] digest1 = Base64.getEncoder().encode(crypt.digest());
+    System.out.println("sha1;" + digest);
+
+    sig.update(digest1);
     boolean verifies = sig.verify(sigToVerify);
 
     System.out.println(verifies);
