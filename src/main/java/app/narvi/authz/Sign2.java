@@ -5,13 +5,16 @@ import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import javax.crypto.Cipher;
 
 public class Sign2 {
-  
+
   public static final String NEW_LINE_CHARACTER = "\n";
   public static final String PUBLIC_KEY_START_KEY_STRING = "-----BEGIN PUBLIC KEY-----";
   public static final String PUBLIC_KEY_END_KEY_STRING = "-----END PUBLIC KEY-----";
@@ -24,12 +27,14 @@ public class Sign2 {
       wA7i00FG+duQLnvpaolJG7KEnBRaQkH7adUKEdeJWLIUeN449x2xyv0CAwEAAQ==
       -----END PUBLIC KEY-----
       """;
-    publicKey = publicKey.replaceAll(NEW_LINE_CHARACTER, EMPTY_STRING)
-            .replaceAll(PUBLIC_KEY_START_KEY_STRING, EMPTY_STRING)
-            .replaceAll(PUBLIC_KEY_END_KEY_STRING, EMPTY_STRING)
-            .replaceAll(NEW_CR_CHARACTER, EMPTY_STRING);
 
   public static void main(String[] args) throws Exception {
+
+    publicKey = publicKey.replaceAll(NEW_LINE_CHARACTER, EMPTY_STRING)
+        .replaceAll(PUBLIC_KEY_START_KEY_STRING, EMPTY_STRING)
+        .replaceAll(PUBLIC_KEY_END_KEY_STRING, EMPTY_STRING)
+        .replaceAll(NEW_CR_CHARACTER, EMPTY_STRING);
+
     MessageDigest crypt = MessageDigest.getInstance("SHA-1");
     crypt.reset();
     crypt.update("app.narvi.example.AllowOwnTenantAccess".getBytes("UTF-8"));
@@ -37,8 +42,6 @@ public class Sign2 {
     String digest = Base64.getEncoder().encodeToString(crypt.digest());
 
     System.out.println("sha1;" + digest);
-
-    KeyFactory keyFactory_ = KeyFactory.getInstance("RSA");
 
     File pkcsKeyFile_ = new File("key.pkcs8" );
     FileInputStream is = new FileInputStream( "key.pkcs8" );
@@ -60,21 +63,24 @@ public class Sign2 {
     Cipher cipher = Cipher.getInstance("RSA");
     cipher.init(Cipher.ENCRYPT_MODE, privKey);
     byte[] encryptedMessageHash = cipher.doFinal(digest.getBytes(StandardCharsets.UTF_8));
-    System.out.println("enc:" +
-        Base64.getEncoder().encodeToString(encryptedMessageHash)
-    );
+    String base64EncodedEncryptedBytes = Base64.getEncoder().encodeToString(encryptedMessageHash);
+    System.out.println("enc:" + base64EncodedEncryptedBytes);
+    
+    byte[] decoded = Base64
+        .getDecoder()
+        .decode(publicKey);
 
-    PKCS8EncodedKeySpec privKeySpec2 = new PKCS8EncodedKeySpec(keyFileBytes_);
-    KeyFactory kf2 = KeyFactory.getInstance("RSA");
-    RSAPrivateKey privKey2 = (RSAPrivateKey) kf.generatePrivate(privKeySpec2);
+    KeySpec keySpec
+        = new X509EncodedKeySpec(decoded);
 
-    Cipher cipher2 = Cipher.getInstance("RSA");
-    cipher2.init(Cipher.DECRYPT_MODE, privKey);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    PublicKey publicKeyk = keyFactory.generatePublic(keySpec);
 
-    cipher2.update(encryptedMessageHash);
-    System.out.println(
-      cipher2.doFinal()
-      //cipher2.doFinal(encryptedMessageHash)
-    );
+    final Cipher cipher2 = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+    cipher2.init(Cipher.DECRYPT_MODE, publicKeyk);
+    byte[] decoded_ = Base64
+        .getDecoder()
+        .decode(base64EncodedEncryptedBytes);
+    byte[] decrypted = cipher.doFinal(decoded_);
   }
 }
