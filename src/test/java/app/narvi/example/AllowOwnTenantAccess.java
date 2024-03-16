@@ -1,14 +1,22 @@
 package app.narvi.example;
 
 import app.narvi.authz.Permission;
-import app.narvi.authz.rules.BasicPolicyRule;
+import app.narvi.authz.PolicyRule;
+import app.narvi.authz.rules.NotApplicableRulesPolicy;
+import app.narvi.authz.rules.NotApplicableRulesPolicy;
+import app.narvi.authz.PolicyRulesProvider;
 
-public class AllowOwnTenantAccess extends BasicPolicyRule {
+public class AllowOwnTenantAccess extends PolicyRulesProvider {
 
 
   @Override
   public Decision evaluate(Permission permission) {
     return Decision.NOT_APPLICABLE;
+  }
+
+  @Override
+  public Iterable<PolicyRule> collect() {
+    return null;
   }
 
   public String getSignature() {

@@ -1,4 +1,4 @@
-package app.narvi.example;
+package app.narvi.authz;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -18,6 +18,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import app.narvi.authz.rules.NotApplicableRulesPolicy;
 
 import javax.crypto.Cipher;
 
@@ -36,8 +37,7 @@ public class BasicPolicyCollection implements RulesCollection {
 
   private final List<PolicyRulesProvider> rulesProviders = List.of(
       () -> Arrays.asList(
-          new AllowOwnTenantAccess(),
-          new EveryoneCanReadPublicCatalogs()
+          new NotApplicablePolicyRulesProvider()
       )
   );
 
