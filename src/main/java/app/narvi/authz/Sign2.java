@@ -26,7 +26,6 @@ public class Sign2 {
   public static void main(String[] args) throws Exception {
 
     //gen sha-1
-
     String stringToHash = "app.narvi.example.AllowOwnTenantAccess";
 
     MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
