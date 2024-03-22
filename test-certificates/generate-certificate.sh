@@ -10,8 +10,8 @@ case $yn in
 		exit 1;;
 esac
 
-rm protego_keystore.jks
-rm publicKey.pem
+#rm protego_keystore.jks
+#rm publicKey.pem
 
 # keytool -genkeypair -alias protegoKeyPair -keyalg RSA -keysize 512 \
 #   -dname "CN=Narvi.app" -validity 365000 -storetype JKS \

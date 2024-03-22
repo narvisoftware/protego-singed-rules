@@ -38,7 +38,8 @@ public class Sign2 {
     System.out.println("sha1 = " + hashString);
 
     //crypt sha-1
-    byte[] privateKeyBytes = Files.readAllBytes(Paths.get("key.pkcs8"));
+    //byte[] privateKeyBytes = Files.readAllBytes(Paths.get("key.pkcs8"));
+    byte[] privateKeyBytes = Sign2.class.getResourceAsStream("/key.pkcs8").readAllBytes();
 
     PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
     KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -50,12 +51,15 @@ public class Sign2 {
     System.out.println("encrypted = " + Base64.getEncoder().encodeToString(encryptedMessageHash));
 
     //decrypt
-    byte[] pubKeyBytes = Files.readAllBytes(Paths.get("publicKey.pub"));
+    //byte[] pubKeyBytes = Files.readAllBytes(Paths.get("publicKey.pub"));
+    byte[] pubKeyBytes = Sign2.class.getResourceAsStream("/publicKey.pub").readAllBytes();
     String publicKeyString = new String(pubKeyBytes, StandardCharsets.UTF_8);
     publicKeyString = publicKeyString.replaceAll(NEW_LINE_CHARACTER, EMPTY_STRING)
         .replaceAll(PUBLIC_KEY_START_KEY_STRING, EMPTY_STRING)
         .replaceAll(PUBLIC_KEY_END_KEY_STRING, EMPTY_STRING)
         .replaceAll(NEW_CR_CHARACTER, EMPTY_STRING);
+
+    System.out.println("pubkey=" + publicKeyString);
 
     byte[] decoded = Base64
         .getDecoder()
@@ -69,6 +73,7 @@ public class Sign2 {
     final Cipher cipher2 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
     cipher2.init(Cipher.DECRYPT_MODE, publicKey);
 
+    System.out.println("encrypted signature = " + Base64.getEncoder().encodeToString(encryptedMessageHash));
     byte[] decrypted = cipher2.doFinal(encryptedMessageHash);
 
 //    String decodedString = Base64

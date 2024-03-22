@@ -1,2 +1,9 @@
-package app.narvi.authz.rules;public class BasicPolicyRule {
+package app.narvi.authz.rules;
+
+import app.narvi.authz.PolicyRule;
+
+interface BasicPolicyRule extends PolicyRule {
+
+  String signature();
+
 }

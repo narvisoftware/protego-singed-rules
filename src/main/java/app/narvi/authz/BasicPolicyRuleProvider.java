@@ -1,21 +1,11 @@
 package app.narvi.authz;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.SignatureException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.KeySpec;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +15,7 @@ import javax.crypto.Cipher;
 
 import app.narvi.authz.rules.NotApplicableRulesPolicy;
 
-public class BasicPolicyRuleP implements PolicyRulesProvider {
+public class BasicPolicyRuleProvider implements PolicyRulesProvider {
 
   public static final String NEW_LINE_CHARACTER = "\n";
   public static final String PUBLIC_KEY_START_KEY_STRING = "-----BEGIN PUBLIC KEY-----";
@@ -34,17 +24,17 @@ public class BasicPolicyRuleP implements PolicyRulesProvider {
   public static final String NEW_CR_CHARACTER = "\r";
   private static final String ALGORITHM = "RSA";
 
-  private final List<BasicPolicyRuleP> basicPolicyRules = new ArrayList<>();
+  private final List<BasicPolicyRuleProvider> basicPolicyRules = new ArrayList<>();
 
   public static void main(String[] args) {
-    BasicPolicyRuleP.of(new NotApplicableRulesPolicy());
+    BasicPolicyRuleProvider.of(new NotApplicableRulesPolicy());
   }
 
-  public static void of(BasicPolicyRuleP... basicPolicyRule) {
-    BasicPolicyRuleP newInstance = new BasicPolicyRuleP();
+  public static void of(BasicPolicyRuleProvider... basicPolicyRule) {
+    BasicPolicyRuleProvider newInstance = new BasicPolicyRuleProvider();
 
     try {
-      for(BasicPolicyRuleP aPolicyRule: basicPolicyRule) {
+      for(BasicPolicyRuleProvider aPolicyRule: basicPolicyRule) {
         newInstance.verifyPolicyRuleSignature(aPolicyRule);
       }
     } catch (Exception e) {
@@ -54,11 +44,11 @@ public class BasicPolicyRuleP implements PolicyRulesProvider {
   }
 
   @Override
-  public Iterable<BasicPolicyRuleP> collect() {
+  public Iterable<BasicPolicyRule> collect() {
     return basicPolicyRules;
   }
 
-  public void verifyPolicyRuleSignature(BasicPolicyRuleP basicPolicyRule) throws Exception {
+  public void verifyPolicyRuleSignature(BasicPolicyRuleProvider basicPolicyRule) throws Exception {
     //gen sha-1
     String stringToHash = "app.narvi.example.AllowOwnTenantAccess";
 
@@ -118,7 +108,4 @@ public class BasicPolicyRuleP implements PolicyRulesProvider {
     return null;
   }
 
-  public String encryptedSha1() {
-    return "V2r5ymtGFuBFF835v4s44QdrN2b8qZmKKdEMGsi5QUkhBN6yNv1Vs5ktp9mreTFq7b9GsE/NNHf7b4aHBvxtcw==";
-  }
 }

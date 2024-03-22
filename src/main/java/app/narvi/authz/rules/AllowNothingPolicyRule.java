@@ -1,9 +1,17 @@
 package app.narvi.authz.rules;
 
-public class AllowNothing {
+import app.narvi.authz.Permission;
 
-  public String encryptedSha1() {
-    return "V2r5ymtGFuBFF835v4s44QdrN2b8qZmKKdEMGsi5QUkhBN6yNv1Vs5ktp9mreTFq7b9GsE/NNHf7b4aHBvxtcw==";
+public class AllowNothingPolicyRule extends PolicyRule {
+
+  @Override
+  public Decision evaluate(Permission permission) {
+    return null;
+  }
+
+  @Override
+  public String signature() {
+    return "u2u1L7i71V5NDyn+rAg2wcT5s/HBvGEf3Gg78QQH86uyjcN4LlwmaAzMNQqLH/Kn4CamjYLbo13vmTy5uN4rHQ==";
   }
 
 }
