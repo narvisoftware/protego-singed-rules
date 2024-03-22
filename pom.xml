@@ -71,7 +71,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>app.narvi.authz.Sign2</mainClass>
+              <mainClass>app.narvi.authz.CreateSignature</mainClass>
             </manifest>
           </archive>
         </configuration>

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import javax.crypto.Cipher;
+
 import app.narvi.authz.rules.BasicPolicyRule;
 
 public class BasicPolicyRuleProvider implements PolicyRulesProvider {
@@ -24,10 +25,6 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
   private static final String ALGORITHM = "RSA";
 
   private final List<BasicPolicyRule> basicPolicyRules = new ArrayList<>();
-
-//  public static void main(String[] args) {
-//    BasicPolicyRuleProvider.of(new AllowNothingPolicyRule());
-//  }
 
   public static BasicPolicyRuleProvider of(BasicPolicyRule... basicPolicyRule) {
     BasicPolicyRuleProvider newInstance = new BasicPolicyRuleProvider();
@@ -61,8 +58,7 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
     System.out.println("sha1 = " + hashString);
 
     //decrypt
-    //byte[] pubKeyBytes = Files.readAllBytes(Paths.get("/Users/mvasilache/prj/personal/clinic/protego-basic/src/main/resources/publicKey.pub"));
-    byte[] pubKeyBytes = Sign2.class.getResourceAsStream("/publicKey.pub").readAllBytes();
+    byte[] pubKeyBytes = this.getClass().getResourceAsStream("/publicKey.pub").readAllBytes();
     String publicKeyString = new String(pubKeyBytes, StandardCharsets.UTF_8);
     publicKeyString = publicKeyString.replaceAll(NEW_LINE_CHARACTER, EMPTY_STRING)
         .replaceAll(PUBLIC_KEY_START_KEY_STRING, EMPTY_STRING)
@@ -88,10 +84,6 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
     System.out.println("encrypted signature = " + Base64.getEncoder().encodeToString(encryptedMessageHash));
 
     byte[] decrypted = cipher2.doFinal(encryptedMessageHash);
-
-//    String decodedString = Base64
-//    .getEncoder()
-//    .encodeToString(decrypted);
 
     String decryptedSignature = new String(decrypted, StandardCharsets.UTF_8);
     System.out.println();
