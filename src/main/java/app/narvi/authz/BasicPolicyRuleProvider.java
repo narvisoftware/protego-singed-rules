@@ -54,8 +54,8 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
 
     String hashString = Base64.getEncoder().encodeToString(sha1.digest());
 
-    System.out.println("string to hash = " + stringToHash);
-    System.out.println("sha1 = " + hashString);
+   // System.out.println("string to hash = " + stringToHash);
+    //System.out.println("sha1 = " + hashString);
 
     //decrypt
     byte[] pubKeyBytes = this.getClass().getResourceAsStream("/publicKey.pub").readAllBytes();

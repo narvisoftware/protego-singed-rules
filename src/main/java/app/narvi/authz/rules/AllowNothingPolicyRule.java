@@ -13,7 +13,7 @@ public class AllowNothingPolicyRule implements BasicPolicyRule {
 
   @Override
   public String signature() {
-    return "uEvgAOiPHJRfV2hbLBEg2oYqEG/SCMbD22IZCOLjcbmhvle0geGfLuTBbR0C2hfNuix9NFzbRLv8mXQzyvVUqQ==";
+    return "RaJmqvsWeb+9bWMQiHnHarzAb6UawCHt+DDhtN02UYffU67Fp4tgcEHrfiEgU2RQYlo31ga2cYR/ns74zPZQAw==";
   }
 
 }

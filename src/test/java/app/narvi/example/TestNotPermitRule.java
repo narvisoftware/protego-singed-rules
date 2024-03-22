@@ -9,7 +9,7 @@ public class TestNotPermitRule implements BasicPolicyRule {
 
   @Override
   public String signature() {
-    return "ey0B5B7r+Xe0boDDKk7eRqF6D3GyQDb7q6gSqdODSZoiowKQUaxR+7cjFRfH6beBe7G8IgJ1JZ/EINGVv++mxw==";
+    return "Wdu4qjOapGqyypt0qycK2JYZyDZj42r3oM+ByvL+E9juI4oOjyLnXtnYuTG2SRgsBtU+Xb9+nTYyG/q3VVeW9w==";
   }
 
   @Override
