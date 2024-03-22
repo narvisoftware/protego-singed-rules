@@ -12,8 +12,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import javax.crypto.Cipher;
-
-import app.narvi.authz.rules.NotApplicableRulesPolicy;
+import app.narvi.authz.rules.BasicPolicyRule;
 
 public class BasicPolicyRuleProvider implements PolicyRulesProvider {
 
@@ -24,33 +23,33 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
   public static final String NEW_CR_CHARACTER = "\r";
   private static final String ALGORITHM = "RSA";
 
-  private final List<BasicPolicyRuleProvider> basicPolicyRules = new ArrayList<>();
+  private final List<BasicPolicyRule> basicPolicyRules = new ArrayList<>();
 
-  public static void main(String[] args) {
-    BasicPolicyRuleProvider.of(new NotApplicableRulesPolicy());
-  }
+//  public static void main(String[] args) {
+//    BasicPolicyRuleProvider.of(new AllowNothingPolicyRule());
+//  }
 
-  public static void of(BasicPolicyRuleProvider... basicPolicyRule) {
+  public static BasicPolicyRuleProvider of(BasicPolicyRule... basicPolicyRule) {
     BasicPolicyRuleProvider newInstance = new BasicPolicyRuleProvider();
-
     try {
-      for(BasicPolicyRuleProvider aPolicyRule: basicPolicyRule) {
+      for (BasicPolicyRule aPolicyRule : basicPolicyRule) {
         newInstance.verifyPolicyRuleSignature(aPolicyRule);
       }
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
     newInstance.basicPolicyRules.addAll(Arrays.asList(basicPolicyRule));
+    return newInstance;
   }
 
   @Override
-  public Iterable<BasicPolicyRule> collect() {
-    return basicPolicyRules;
+  public Iterable<? super PolicyRule> collect() {
+    return ((Iterable) basicPolicyRules);
   }
 
-  public void verifyPolicyRuleSignature(BasicPolicyRuleProvider basicPolicyRule) throws Exception {
+  public void verifyPolicyRuleSignature(BasicPolicyRule basicPolicyRule) throws Exception {
     //gen sha-1
-    String stringToHash = "app.narvi.example.AllowOwnTenantAccess";
+    String stringToHash = basicPolicyRule.getClass().getCanonicalName();
 
     MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
     sha1.reset();
@@ -84,8 +83,7 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
     final Cipher cipher2 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
     cipher2.init(Cipher.DECRYPT_MODE, publicKey);
 
-
-    String enc = encryptedSha1();
+    String enc = basicPolicyRule.signature();
     byte[] encryptedMessageHash = Base64.getDecoder().decode(enc);
     System.out.println("encrypted signature = " + Base64.getEncoder().encodeToString(encryptedMessageHash));
 
@@ -98,14 +96,9 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
     String decryptedSignature = new String(decrypted, StandardCharsets.UTF_8);
     System.out.println();
 
-    if(!hashString.equals(decryptedSignature)) {
+    if (!hashString.equals(decryptedSignature)) {
       throw new SignatureException("signature does not match!");
     }
-  }
-
-  @Override
-  public Decision evaluate(Permission permission) {
-    return null;
   }
 
 }

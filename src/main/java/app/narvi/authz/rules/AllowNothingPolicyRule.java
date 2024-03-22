@@ -1,17 +1,19 @@
 package app.narvi.authz.rules;
 
+import static app.narvi.authz.PolicyRule.Decision.NOT_APPLICABLE;
+
 import app.narvi.authz.Permission;
 
-public class AllowNothingPolicyRule extends PolicyRule {
+public class AllowNothingPolicyRule implements BasicPolicyRule {
 
   @Override
   public Decision evaluate(Permission permission) {
-    return null;
+    return NOT_APPLICABLE;
   }
 
   @Override
   public String signature() {
-    return "u2u1L7i71V5NDyn+rAg2wcT5s/HBvGEf3Gg78QQH86uyjcN4LlwmaAzMNQqLH/Kn4CamjYLbo13vmTy5uN4rHQ==";
+    return "uEvgAOiPHJRfV2hbLBEg2oYqEG/SCMbD22IZCOLjcbmhvle0geGfLuTBbR0C2hfNuix9NFzbRLv8mXQzyvVUqQ==";
   }
 
 }
