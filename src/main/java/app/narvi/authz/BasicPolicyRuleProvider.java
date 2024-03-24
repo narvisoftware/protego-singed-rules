@@ -1,5 +1,6 @@
 package app.narvi.authz;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -14,8 +15,12 @@ import java.util.List;
 import javax.crypto.Cipher;
 
 import app.narvi.authz.rules.BasicPolicyRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BasicPolicyRuleProvider implements PolicyRulesProvider {
+
+  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final String NEW_LINE_CHARACTER = "\n";
   public static final String PUBLIC_KEY_START_KEY_STRING = "-----BEGIN PUBLIC KEY-----";
@@ -54,8 +59,8 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
 
     String hashString = Base64.getEncoder().encodeToString(sha1.digest());
 
-   // System.out.println("string to hash = " + stringToHash);
-    //System.out.println("sha1 = " + hashString);
+   LOG.debug("string to hash = " + stringToHash);
+   LOG.debug("sha1 = " + hashString);
 
     //decrypt
     byte[] pubKeyBytes = this.getClass().getResourceAsStream("/publicKey.pub").readAllBytes();
@@ -65,7 +70,7 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
         .replaceAll(PUBLIC_KEY_END_KEY_STRING, EMPTY_STRING)
         .replaceAll(NEW_CR_CHARACTER, EMPTY_STRING);
 
-    System.out.println("pubkey=" + publicKeyString);
+    LOG.debug("pubkey=" + publicKeyString);
 
     byte[] decoded = Base64
         .getDecoder()
@@ -73,7 +78,7 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
 
     KeySpec keySpec = new X509EncodedKeySpec(decoded);
 
-    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
     PublicKey publicKey = keyFactory.generatePublic(keySpec);
 
     final Cipher cipher2 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
@@ -81,12 +86,13 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
 
     String enc = basicPolicyRule.signature();
     byte[] encryptedMessageHash = Base64.getDecoder().decode(enc);
-    System.out.println("encrypted signature = " + Base64.getEncoder().encodeToString(encryptedMessageHash));
+    LOG.debug("encrypted signature = " + Base64.getEncoder().encodeToString(encryptedMessageHash));
 
     byte[] decrypted = cipher2.doFinal(encryptedMessageHash);
 
     String decryptedSignature = new String(decrypted, StandardCharsets.UTF_8);
-    System.out.println();
+    LOG.debug("Decrypted Signature:" + decryptedSignature);
+    LOG.info("Loaded class " + stringToHash + " signature: " + Base64.getEncoder().encodeToString(encryptedMessageHash) + " mach class has:" + hashString);
 
     if (!hashString.equals(decryptedSignature)) {
       throw new SignatureException("signature does not match!");
