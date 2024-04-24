@@ -1,4 +1,7 @@
-[CAUTION]
+= Protego Basic
+:icons: font
+
+[WARNING]
 .DRAFT
 ====
 Work in progress.
