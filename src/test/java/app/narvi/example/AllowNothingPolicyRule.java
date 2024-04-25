@@ -1,8 +1,9 @@
-package app.narvi.authz.rules;
+package app.narvi.example;
 
 import static app.narvi.authz.PolicyRule.Decision.NOT_APPLICABLE;
 
 import app.narvi.authz.Permission;
+import app.narvi.authz.rules.BasicPolicyRule;
 
 public class AllowNothingPolicyRule implements BasicPolicyRule {
 

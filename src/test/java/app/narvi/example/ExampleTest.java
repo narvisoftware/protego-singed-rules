@@ -1,11 +1,10 @@
 package app.narvi.example;
 
-import app.narvi.authz.BasicPolicyRuleProvider;
+import app.narvi.authz.rules.BasicPolicyRuleProvider;
 import app.narvi.authz.Permission;
 import app.narvi.authz.PolicyEvaluator;
 import app.narvi.authz.PolicyException;
 import app.narvi.authz.PolicyRulesProvider;
-import app.narvi.authz.rules.AllowNothingPolicyRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

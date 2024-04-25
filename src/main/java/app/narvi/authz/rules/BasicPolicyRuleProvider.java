@@ -1,4 +1,4 @@
-package app.narvi.authz;
+package app.narvi.authz.rules;
 
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +14,8 @@ import java.util.Base64;
 import java.util.List;
 import javax.crypto.Cipher;
 
-import app.narvi.authz.rules.BasicPolicyRule;
+import app.narvi.authz.PolicyRule;
+import app.narvi.authz.PolicyRulesProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
