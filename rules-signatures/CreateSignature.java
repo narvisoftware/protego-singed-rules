@@ -78,10 +78,10 @@ public class CreateSignature {
     final Cipher cipher2 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
     cipher2.init(Cipher.DECRYPT_MODE, publicKey);
 
-    System.out.println("encrypted signature (copy this) = " + Base64.getEncoder().encodeToString(encryptedMessageHash));
+    
     byte[] decrypted = cipher2.doFinal(encryptedMessageHash);
 
     System.out.println("decrypt = " + new String(decrypted, StandardCharsets.UTF_8));
-
+    System.out.println("*******\nencrypted signature (copy this):\n" + Base64.getEncoder().encodeToString(encryptedMessageHash) + "\n*******");
   }
 }
