@@ -33,7 +33,6 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.DumperOptions.LineBreak;
 import org.yaml.snakeyaml.DumperOptions.NonPrintableStyle;
-import org.yaml.snakeyaml.DumperOptions.ScalarStyle;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -93,36 +92,28 @@ public class CreateSignature {
     byte[] decrypted = cipher2.doFinal(encryptedMessageHash);
     String signature = Base64.getEncoder().encodeToString(encryptedMessageHash);
 
-    System.out.println("*******\nencrypted signature (copy this):\n" + signature + "\n*******");
+    System.out.println("*******\nencrypted signature:\n" + signature + "\n*******");
+
     return signature;
   }
 
   private void loadPublicKey() throws Exception {
     byte[] pubKeyBytes = Files.readAllBytes(Paths.get("temp/publicKey.pub"));
-
     publicKeyString = new String(pubKeyBytes, StandardCharsets.UTF_8);
     publicKeyString = publicKeyString.replaceAll(NEW_LINE_CHARACTER, EMPTY_STRING)
         .replaceAll(PUBLIC_KEY_START_KEY_STRING, EMPTY_STRING)
         .replaceAll(PUBLIC_KEY_END_KEY_STRING, EMPTY_STRING)
         .replaceAll(NEW_CR_CHARACTER, EMPTY_STRING);
-
   }
 
   private void addProtegoBasicToClasspath() throws Exception {
-    URL url = newURL("./../target/classes");
-
+    URL url1 = newURL("./../target/classes");
     ClassLoader prevCl = Thread.currentThread().getContextClassLoader();
-    ClassLoader urlCl = URLClassLoader.newInstance(new URL[]{url}, prevCl);
+    ClassLoader urlCl = URLClassLoader.newInstance(new URL[]{url1}, prevCl);
     Thread.currentThread().setContextClassLoader(urlCl);
-
-    Class cl = Class.forName("app.narvi.authz.rules.BasicPolicyRuleProvider");
-
   }
 
   private void loadClasses() throws Exception {
-    URL fileUrl = newURL("./../src/main/resources/protego-policy-rules-and-signatures.yml");
-    JsonPath jsonPath = new JsonPath();
-
     LoaderOptions loaderOptions = new LoaderOptions();
     loaderOptions.setProcessComments(true);
 
@@ -134,39 +125,40 @@ public class CreateSignature {
     dumperOptions.setIndentWithIndicator(true);
     dumperOptions.setDefaultFlowStyle(FlowStyle.BLOCK);
     dumperOptions.setPrettyFlow(true);
-    dumperOptions.setIndicatorIndent(2);
     dumperOptions.setSplitLines(false);
-    dumperOptions.setDefaultScalarStyle(ScalarStyle.DOUBLE_QUOTED);
+
     Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
 
+    URL fileUrl = newURL("./../src/main/resources/protego-policy-rules-and-signatures.yml");
     MappingNode root;
     try (FileReader reader = new FileReader(new File(fileUrl.toURI()))) {
       root = (MappingNode) yaml.compose(reader);
     }
 
     StringWriter generatedFile = new StringWriter();
-
     Writer writer = new PrintWriter(new BufferedWriter(generatedFile));
     Emitter emitter = new Emitter(writer, dumperOptions);
 
     SignatureClass signatureForClass = null;
+    JsonPath jsonPath = new JsonPath();
     for (Event event : yaml.serialize(root)) {
 
       jsonPath.add(event);
 
       String pubKeyGlobal = jsonPath.receive("/public-key/val");
-      String aClass = jsonPath.receive("/public-key/val/policy-rules/class/val");
+      String aClass = jsonPath.receive("/policy-rules/class/val");
       String aSignature = jsonPath.receive("/policy-rules/signature/val");
 
       if (pubKeyGlobal != null) {
+        ScalarEvent scalarEv = (ScalarEvent) event;
         event = new ScalarEvent(
-            ((ScalarEvent) event).getAnchor(),
-            ((ScalarEvent) event).getTag(),
-            ((ScalarEvent) event).getImplicit(),
+            scalarEv.getAnchor(),
+            scalarEv.getTag(),
+            scalarEv.getImplicit(),
             publicKeyString,
-            event.getStartMark(),
-            event.getEndMark(),
-            ((ScalarEvent) event).getScalarStyle());
+            scalarEv.getStartMark(),
+            scalarEv.getEndMark(),
+            scalarEv.getScalarStyle());
       }
 
       if (aClass != null) {
@@ -177,15 +169,15 @@ public class CreateSignature {
       if (aSignature != null) {
         signatureForClass.signature = aSignature;
         String signature = getSignature(signatureForClass.className);
+        ScalarEvent scalarEv = (ScalarEvent) event;
         event = new ScalarEvent(
-            ((ScalarEvent) event).getAnchor(),
-            ((ScalarEvent) event).getTag(),
-            ((ScalarEvent) event).getImplicit(),
+            scalarEv.getAnchor(),
+            scalarEv.getTag(),
+            scalarEv.getImplicit(),
             signature,
-            event.getStartMark(),
-            event.getEndMark(),
-            ((ScalarEvent) event).getScalarStyle());
-
+            scalarEv.getStartMark(),
+            scalarEv.getEndMark(),
+            scalarEv.getScalarStyle());
         signatureForClass = null;
       }
 
@@ -196,8 +188,6 @@ public class CreateSignature {
     generatedFile.flush();
     fileWriter.write(generatedFile.toString());
     fileWriter.close();
-
-
   }
 
   private URL newURL(String relativePath) throws Exception {
@@ -214,7 +204,7 @@ public class CreateSignature {
   public static class JsonPath {
     /*
       Stack interface:
-      ________________________________________
+      _______________________________________
       |Stack Method | Equivalent Deque Method|
       |--------------------------------------|
       | push(e)	    | addFirst(e)            |
@@ -270,6 +260,9 @@ public class CreateSignature {
           pathEventsStack.removeFirst();
           pathEventsStack.removeFirst();
         }
+        if (pathEventsStack.peekFirst().getEventId() == ID.Scalar && !isNextScalar) {
+          isKeyValueEvent = true;
+        }
       }
 
       pathEventsStack.addFirst(event);
@@ -277,6 +270,7 @@ public class CreateSignature {
 
 
     public String receive(String path) {
+
       if (!path.endsWith("/val")) {
         throw new RuntimeException("You can query only for vals");
       }
@@ -304,8 +298,6 @@ public class CreateSignature {
         currrentPath += ("/" + scalar.getValue());
         previousIsVal = true;
       }
-
-      System.out.println("CURRENT SCALARS PATH: " + currrentPath);
 
       if (currrentPath.equals(path)) {
         return ((ScalarEvent) pathEventsStack.peekFirst()).getValue();

@@ -1,0 +1,10 @@
+# thins key must be present
+public-key: >-
+  <copy pub key>
+
+# also class/signature keys must be present
+policy-rules:
+- class: app.narvi.example.AllowNothingPolicyRule
+  signature: "<generate signture>"
+- class: app.narvi.example.TestNotPermitRule
+  signature: "<generate signture>"
