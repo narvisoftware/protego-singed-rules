@@ -39,7 +39,7 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
         newInstance.verifyPolicyRuleSignature(aPolicyRule);
       }
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Class signature does not match.", e);
     }
     newInstance.basicPolicyRules.addAll(Arrays.asList(basicPolicyRule));
     return newInstance;

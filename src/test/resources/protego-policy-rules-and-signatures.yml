@@ -1,0 +1,9 @@
+# thins key must be present
+public-key: >-
+  MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL2iF6s5ZCDXEUHElhACtpY3JwcjlEG1i54KThXXh2q09dKnd+EfQAD331iJYnz6H23uvIUC3DmxlESC2KmlS1sCAwEAAQ==
+# also class/signature keys must be present
+policy-rules:
+- class: app.narvi.example.AllowNothingPolicyRule
+  signature: "qGDHFUdUOahJ0oPDxDVY1DTarST8ZEkg81RqkXF/NYoTwHPfd4nOXNsIXM3CVqAdDOpv5IENZbNESITNU+/4Rw=="
+- class: app.narvi.example.TestNotPermitRule
+  signature: "GHvYEt55SdmErBRkHi80bkO2XcaA+FxacR8yhYEHzivs2nWL/C0fSG2Xl7mSOuXOJEZWAjSoMBn0uRymJJlx5g=="

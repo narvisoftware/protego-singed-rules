@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -29,6 +28,8 @@ import java.util.Deque;
 import java.util.List;
 import javax.crypto.Cipher;
 
+import javassist.ClassPool;
+import javassist.CtClass;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.DumperOptions.LineBreak;
@@ -55,15 +56,16 @@ public class CreateSignature {
 
   public static void main(String[] args) throws Exception {
     CreateSignature createSignature = new CreateSignature();
-    createSignature.addProtegoBasicToClasspath();
     createSignature.loadPublicKey();
-    createSignature.loadClasses();
+    createSignature.modifySignaturesFile(args[0].trim());
   }
 
-  private String getSignature(String stringToHashAndEncrypt) throws Exception {
+  private String getSignature(String classToSign) throws Exception {
+    byte[] classFingerprint = getClasssFingerprint(classToSign);
+
     MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
     sha1.reset();
-    sha1.update(stringToHashAndEncrypt.getBytes(StandardCharsets.UTF_8));
+    sha1.update(classFingerprint);
 
     String hashString = Base64.getEncoder().encodeToString(sha1.digest());
 
@@ -97,6 +99,25 @@ public class CreateSignature {
     return signature;
   }
 
+  private byte[] getClasssFingerprint(String classToSign) throws Exception {
+    ClassPool cp = ClassPool.getDefault();
+    CtClass cc = cp.get(classToSign);
+    byte[] bytecode = cc.toBytecode();
+    /*
+        class file contains:
+        ClassFile {
+            u4   magic;
+            u2   minor_version;
+            u2   major_version;
+            .....
+        }
+        magic u4 is Hex: "CAFE BABE"
+        version (4bytes) for java 22 is version 66.0 (HEX: "0000 0042")
+     */
+    byte[] bytecodeWithoutVersion = Arrays.copyOfRange(bytecode, 4 + 2 + 2, bytecode.length);
+    return bytecodeWithoutVersion;
+  }
+
   private void loadPublicKey() throws Exception {
     byte[] pubKeyBytes = Files.readAllBytes(Paths.get("temp/publicKey.pub"));
     publicKeyString = new String(pubKeyBytes, StandardCharsets.UTF_8);
@@ -106,14 +127,7 @@ public class CreateSignature {
         .replaceAll(NEW_CR_CHARACTER, EMPTY_STRING);
   }
 
-  private void addProtegoBasicToClasspath() throws Exception {
-    URL url1 = newURL("./../target/classes");
-    ClassLoader prevCl = Thread.currentThread().getContextClassLoader();
-    ClassLoader urlCl = URLClassLoader.newInstance(new URL[]{url1}, prevCl);
-    Thread.currentThread().setContextClassLoader(urlCl);
-  }
-
-  private void loadClasses() throws Exception {
+  private void modifySignaturesFile(String fileFolder) throws Exception {
     LoaderOptions loaderOptions = new LoaderOptions();
     loaderOptions.setProcessComments(true);
 
@@ -141,6 +155,7 @@ public class CreateSignature {
 
     SignatureClass signatureForClass = null;
     JsonPath jsonPath = new JsonPath();
+
     for (Event event : yaml.serialize(root)) {
 
       jsonPath.add(event);
@@ -191,10 +206,14 @@ public class CreateSignature {
   }
 
   private URL newURL(String relativePath) throws Exception {
-    String absolutePath = FileSystems.getDefault().getPath(relativePath).toAbsolutePath().normalize().toString();
+    String absolutePath = getAbsoluteFilePath(relativePath);
     return new URL("file:///" + absolutePath);
   }
 
+  private String getAbsoluteFilePath(String path) {
+    String absolutePath = FileSystems.getDefault().getPath(path).toAbsolutePath().normalize().toString();
+    return absolutePath.replaceAll("\\\\", "/");
+  }
 
   public static class SignatureClass {
     public String className;
@@ -202,6 +221,7 @@ public class CreateSignature {
   }
 
   public static class JsonPath {
+
     /*
       Stack interface:
       _______________________________________
