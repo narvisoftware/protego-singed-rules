@@ -7,13 +7,13 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
-import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.KeySpec;
@@ -28,8 +28,9 @@ import java.util.Deque;
 import java.util.List;
 import javax.crypto.Cipher;
 
-import javassist.ClassPool;
-import javassist.CtClass;
+import app.narvi.authz.rules.conf.PolicyRuleCofiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.DumperOptions.LineBreak;
@@ -46,38 +47,45 @@ import org.yaml.snakeyaml.representer.Representer;
 
 public class CreateSignature {
 
+  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
   public static final String NEW_LINE_CHARACTER = "\n";
   public static final String PUBLIC_KEY_START_KEY_STRING = "-----BEGIN PUBLIC KEY-----";
   public static final String PUBLIC_KEY_END_KEY_STRING = "-----END PUBLIC KEY-----";
   public static final String EMPTY_STRING = "";
   public static final String NEW_CR_CHARACTER = "\r";
 
+  private static final String ALGORITHM = "RSA";
+
+  private static final String SIGNATURES_FILE_NAME = "protego-policy-rules-and-signatures.yml";
+
   String publicKeyString;
 
   public static void main(String[] args) throws Exception {
+    if (args.length == 0 || args[0].isBlank()) {
+      System.err.println(
+          "Invalid usage: pass the folder location of " + SIGNATURES_FILE_NAME + " as the first parameter.");
+      System.exit(-1);
+    }
+
     CreateSignature createSignature = new CreateSignature();
     createSignature.loadPublicKey();
     createSignature.modifySignaturesFile(args[0].trim());
   }
 
-  private String getSignature(String classToSign) throws Exception {
-    byte[] classFingerprint = getClasssFingerprint(classToSign);
-
-    MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-    sha1.reset();
-    sha1.update(classFingerprint);
-
-    String hashString = Base64.getEncoder().encodeToString(sha1.digest());
+  private String getSignature(String classNameToSign) throws Exception {
+    PolicyRuleCofiguration policyRuleCofiguration = new PolicyRuleCofiguration(classNameToSign);
+    byte[] classHash = Base64.getDecoder().decode(policyRuleCofiguration.getClassHash());
 
     byte[] privateKeyBytes = Files.readAllBytes(Paths.get("temp/key.pkcs8"));
 
     PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
-    KeyFactory kf = KeyFactory.getInstance("RSA");
+    KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
     RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) kf.generatePrivate(privateKeySpec);
 
     Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
     cipher.init(Cipher.ENCRYPT_MODE, rsaPrivateKey);
-    byte[] encryptedMessageHash = cipher.doFinal(hashString.getBytes(StandardCharsets.UTF_8));
+    byte[] encryptedMessageHash = cipher.doFinal(classHash);
 
     byte[] decoded = Base64
         .getDecoder()
@@ -94,28 +102,11 @@ public class CreateSignature {
     byte[] decrypted = cipher2.doFinal(encryptedMessageHash);
     String signature = Base64.getEncoder().encodeToString(encryptedMessageHash);
 
-    System.out.println("*******\nencrypted signature:\n" + signature + "\n*******");
+    assert Arrays.equals(decrypted, classHash) : "Something got wrong during signature creation";
+
+    LOG.debug("*******\nencrypted signature:\n" + signature + "\n*******");
 
     return signature;
-  }
-
-  private byte[] getClasssFingerprint(String classToSign) throws Exception {
-    ClassPool cp = ClassPool.getDefault();
-    CtClass cc = cp.get(classToSign);
-    byte[] bytecode = cc.toBytecode();
-    /*
-        class file contains:
-        ClassFile {
-            u4   magic;
-            u2   minor_version;
-            u2   major_version;
-            .....
-        }
-        magic u4 is Hex: "CAFE BABE"
-        version (4bytes) for java 22 is version 66.0 (HEX: "0000 0042")
-     */
-    byte[] bytecodeWithoutVersion = Arrays.copyOfRange(bytecode, 4 + 2 + 2, bytecode.length);
-    return bytecodeWithoutVersion;
   }
 
   private void loadPublicKey() throws Exception {
@@ -143,66 +134,67 @@ public class CreateSignature {
 
     Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
 
-    URL fileUrl = newURL("./../src/main/resources/protego-policy-rules-and-signatures.yml");
+    URL fileUrl = newURL(getAbsoluteFilePath(fileFolder) + "/" + SIGNATURES_FILE_NAME);
     MappingNode root;
     try (FileReader reader = new FileReader(new File(fileUrl.toURI()))) {
       root = (MappingNode) yaml.compose(reader);
     }
 
     StringWriter generatedFile = new StringWriter();
-    Writer writer = new PrintWriter(new BufferedWriter(generatedFile));
-    Emitter emitter = new Emitter(writer, dumperOptions);
 
-    SignatureClass signatureForClass = null;
-    JsonPath jsonPath = new JsonPath();
+    try (Writer writer = new PrintWriter(new BufferedWriter(generatedFile))) {
+      Emitter emitter = new Emitter(writer, dumperOptions);
 
-    for (Event event : yaml.serialize(root)) {
+      PolicyRuleCofiguration signatureForClass = null;
+      JsonPath jsonPath = new JsonPath();
 
-      jsonPath.add(event);
+      for (Event event : yaml.serialize(root)) {
 
-      String pubKeyGlobal = jsonPath.receive("/public-key/val");
-      String aClass = jsonPath.receive("/policy-rules/class/val");
-      String aSignature = jsonPath.receive("/policy-rules/signature/val");
+        jsonPath.add(event);
 
-      if (pubKeyGlobal != null) {
-        ScalarEvent scalarEv = (ScalarEvent) event;
-        event = new ScalarEvent(
-            scalarEv.getAnchor(),
-            scalarEv.getTag(),
-            scalarEv.getImplicit(),
-            publicKeyString,
-            scalarEv.getStartMark(),
-            scalarEv.getEndMark(),
-            scalarEv.getScalarStyle());
+        String pubKeyGlobal = jsonPath.getValue("/publicKey/val");
+        String aClass = jsonPath.getValue("/policyRuleCofigurations/className/val");
+        String aSignature = jsonPath.getValue("/policyRuleCofigurations/signature/val");
+
+        if (pubKeyGlobal != null) {
+          ScalarEvent scalarEv = (ScalarEvent) event;
+          event = new ScalarEvent(
+              scalarEv.getAnchor(),
+              scalarEv.getTag(),
+              scalarEv.getImplicit(),
+              publicKeyString,
+              scalarEv.getStartMark(),
+              scalarEv.getEndMark(),
+              scalarEv.getScalarStyle());
+        }
+
+        if (aClass != null) {
+          signatureForClass = new PolicyRuleCofiguration(aClass);
+        }
+
+        if (aSignature != null) {
+          signatureForClass.setSignature(aSignature);
+          String signature = getSignature(signatureForClass.getClassName());
+          ScalarEvent scalarEv = (ScalarEvent) event;
+          event = new ScalarEvent(
+              scalarEv.getAnchor(),
+              scalarEv.getTag(),
+              scalarEv.getImplicit(),
+              signature,
+              scalarEv.getStartMark(),
+              scalarEv.getEndMark(),
+              scalarEv.getScalarStyle());
+          signatureForClass = null;
+        }
+
+        emitter.emit(event);
       }
-
-      if (aClass != null) {
-        signatureForClass = new SignatureClass();
-        signatureForClass.className = aClass;
-      }
-
-      if (aSignature != null) {
-        signatureForClass.signature = aSignature;
-        String signature = getSignature(signatureForClass.className);
-        ScalarEvent scalarEv = (ScalarEvent) event;
-        event = new ScalarEvent(
-            scalarEv.getAnchor(),
-            scalarEv.getTag(),
-            scalarEv.getImplicit(),
-            signature,
-            scalarEv.getStartMark(),
-            scalarEv.getEndMark(),
-            scalarEv.getScalarStyle());
-        signatureForClass = null;
-      }
-
-      emitter.emit(event);
     }
 
-    FileWriter fileWriter = new FileWriter(new File(fileUrl.toURI()));
-    generatedFile.flush();
-    fileWriter.write(generatedFile.toString());
-    fileWriter.close();
+    try (FileWriter fileWriter = new FileWriter(new File(fileUrl.toURI()))) {
+      fileWriter.write(generatedFile.toString());
+    }
+
   }
 
   private URL newURL(String relativePath) throws Exception {
@@ -213,11 +205,6 @@ public class CreateSignature {
   private String getAbsoluteFilePath(String path) {
     String absolutePath = FileSystems.getDefault().getPath(path).toAbsolutePath().normalize().toString();
     return absolutePath.replaceAll("\\\\", "/");
-  }
-
-  public static class SignatureClass {
-    public String className;
-    public String signature;
   }
 
   public static class JsonPath {
@@ -273,35 +260,31 @@ public class CreateSignature {
       }
 
       if (event.getEventId() == ID.Scalar) {
-        boolean isNextScalar = false;
-        if (pathEventsStack.peekFirst().getEventId() == ID.Scalar && isKeyValueEvent == true) {
-          isKeyValueEvent = false;
-          isNextScalar = true;
-          pathEventsStack.removeFirst();
-          pathEventsStack.removeFirst();
-        }
-        if (pathEventsStack.peekFirst().getEventId() == ID.Scalar && !isNextScalar) {
-          isKeyValueEvent = true;
+        boolean previousWasScalar = pathEventsStack.peekFirst().getEventId() == ID.Scalar;
+        if (previousWasScalar) {
+          if (isKeyValueEvent) {
+            isKeyValueEvent = false;
+            pathEventsStack.removeFirst();
+            pathEventsStack.removeFirst();
+          } else {
+            isKeyValueEvent = true;
+          }
         }
       }
 
       pathEventsStack.addFirst(event);
     }
 
-
-    public String receive(String path) {
-
+    public String getValue(String path) {
       if (!path.endsWith("/val")) {
         throw new RuntimeException("You can query only for vals");
       }
-
       if (lastEventWasComment) {
         return null;
       }
 
       List extractedPathEventsStack = new ArrayList(Arrays.asList(pathEventsStack.toArray()));
       Collections.reverse(extractedPathEventsStack);
-
       String currrentPath = "";
       boolean previousIsVal = false;
       for (Event aPathEntry : (List<Event>) extractedPathEventsStack) {
@@ -325,8 +308,5 @@ public class CreateSignature {
         return null;
       }
     }
-
   }
-
-
 }

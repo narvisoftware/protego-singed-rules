@@ -1,16 +1,12 @@
-#!/bin/bash
+@echo off
+setlocal
 
-# set -x
+choice /C YN /N /M "Do you want to regenerate the keys? [Y/N]?"
+if not errorlevel 2 if errorlevel 1 goto Continue
+exit /B
 
-read -p "Do you want to regenerate the keys? (yes/no) " yn
-
-case $yn in
-	yes ) echo ok, generating...;;
-	no ) echo exiting...;
-		exit;;
-	* ) echo invalid response;
-		exit 1;;
-esac
+:Continue
+echo ok, generating ...
 
 mkdir temp
 cd temp
@@ -24,3 +20,4 @@ openssl pkcs8 -topk8 -in key.pem -nocrypt -outform DER -out key.pkcs8
 openssl rsa -in key.pem -pubout > publicKey.pub
 
 cd ..
+endlocal

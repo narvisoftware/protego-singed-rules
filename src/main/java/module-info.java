@@ -1,7 +1,16 @@
+import app.narvi.authz.AuditProvider;
+import app.narvi.authz.auditlog.LoggingAuditProvider;
+
 module app.narvi.protego.basic {
-    requires transitive app.narvi.protego.core;
-    requires static org.slf4j;
-//    requires com.example.utils;
-    exports app.narvi.authz.rules;
-    uses app.narvi.authz.AuditProvider;
+  requires transitive app.narvi.protego.core;
+  requires org.slf4j;
+  requires org.javassist;
+  requires org.yaml.snakeyaml;
+
+  exports app.narvi.authz.rules;
+  exports app.narvi.authz.rules.conf;
+
+  opens app.narvi.authz.rules.conf to org.yaml.snakeyaml;
+
+  provides AuditProvider with LoggingAuditProvider;
 }

@@ -1,6 +1,8 @@
-package app.narvi.example;
+package app.narvi.authz.rules;
 
-import app.narvi.authz.rules.BasicPolicyRuleProvider;
+import static app.narvi.authz.CrudAction.READ;
+
+import app.narvi.authz.CrudAction;
 import app.narvi.authz.Permission;
 import app.narvi.authz.PolicyEvaluator;
 import app.narvi.authz.PolicyException;
@@ -8,24 +10,22 @@ import app.narvi.authz.PolicyRulesProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ExampleTest {
+public class PolicyRulesTest {
 
 
   @Test
-  public void example1() {
-    PolicyRulesProvider policyRulesProvider = BasicPolicyRuleProvider.of(new AllowNothingPolicyRule(),
-        new TestNotPermitRule());
+  public void permitAllTest() {
+    PolicyRulesProvider policyRulesProvider = new BasicPolicyRuleProvider();
     PolicyEvaluator.registerProviders(policyRulesProvider);
-    FakePermission dummyPermission = new FakePermission(new Object(), new Object());
+    FakePermission dummyPermission = new FakePermission(READ, new Object());
     Throwable exception = Assertions.assertThrows(PolicyException.class,
         () -> PolicyEvaluator.evaluatePermission(dummyPermission));
     Assertions.assertEquals(PolicyException.class, exception.getClass());
-    //System.out.println(result);
   }
 
   public class FakePermission extends Permission {
-    public FakePermission(Object protectedResource, Object action) {
-      super(protectedResource, action);
+    public FakePermission(CrudAction action, Object protectedResource) {
+      super(action, protectedResource);
     }
   }
 

@@ -1,4 +1,4 @@
-package app.narvi.example;
+package app.narvi.authz.rules;
 
 public class PatientFile {
   Tenant tenantClinic;
