@@ -1,13 +1,57 @@
 = Protego Basic
-
 :icons: font
 
-image::https://badgers.space/badge/foo/Warning/orange?icon=feather-alert-triangle&scale=1.4&label=&label_color=red[]
-[WARNING]
-.DRAFT
-====
-Work in progress.
-====
+This an implementation of the API from https://github.com/narvisoftware/protego-core[protego-core].
+It focuses on the security aspect of the poly rules.
+Meaning that it tries to prevent loading of unwanted rules, changing the existing rules or adding rules trough reflection.
+The intention is not to protect the application from the developer (you must trust your developers), but to avoid changes made by a malicious third party library from a project's dependency.
+
+In order to forbid changes trough reflection, I am using Java Platform Module System (JPMS). The application must also run as a module to kick in the reflection protection mechanism of JPMS.
+
+image::https://badgers.space/badge/foo/Attention/orange?icon=feather-alert-triangle&scale=1.4&label=&label_color=red[]
+Each policy rule must be tested rigorously.
+
+=== Usage
+
+This project contains maven project in the `protego-rules-signatures` subfolder.
+This project is used to sign the policy rule classes.
+Policy rules are loaded from `allow-nothing-policy-rules.yml` file that must be located in project's root folder.
+The file contains the public key used to decrypt the signature, the names of the fully qualified policy rule classes and a signature for each class.
+The signature is made from hashing the class bytecode (SHA-1), from the bytecode is extracted the 8 bytes header (CAFE BABE + 4 bytes containing the class version).
+
+* The first step is to generate the public and private keys (RSA-512) in `temp` subfolder (`key.pem` - private key, `publicKey.pub` - public key, `key.pkcs8` - public+private key pair) by running the `generate-certificate.sh` (or `.bat`) script.
+*  Create a file named `allow-nothing-policy-rules.yml` in the project's root (the project that use the protego framework).
+The file must have the key `publicKey` in the root, another key named `policyRuleCofigurations` which is a list of policy rule classes toghether with theirs signatures (`className` amd `signature`).
+You can copy this file content:
+[source,yaml]
+----
+# thins key must be present
+publicKey: >-
+  <copy pub key>
+
+# also class/signature keys must be present
+policyRuleCofigurations:
+  - className: your.policy.RuleClass
+    signature: "<generate signture>"
+  - className: your.policy.OtherRuleClass
+    signature: "<generate signture>"
+----
+* Then, using a terminal, go to the folder where the `allow-nothing-policy-rules.yml` file is located (for example `/home/user/protego-basic/src/test/resources/`).
+From this folder run the `sign.sh` (or `.bat`) script. For example: `../../../protego-rules-signatures/sign.sh`. This will sign the policy classes and copy the public key to the yaml file.
+After that the file should look something like that:
+[source,yaml]
+----
+publicKey: >-
+  MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJW2DQAcahQ1MpNCRDR4wBFn+hGwUQ3K5DgIepusbC6r6tw3m5xUc54UttWwQCpxLwCfuN7aR6VXLuPghpKHEfkCAwEAAQ==
+# also class/signature keys must be present
+policyRuleCofigurations:
+- className: your.policy.RuleClass
+  signature: "R/Uif8JOkDOCafzAqlGl6SG6JZzWueSaS46MomKF8Lvsu3KL5RdlNpVpmtUcgpfvSD1Jd0cPjqwEFGwbb3MEIQ=="
+- className: your.policy.OtherRuleClass
+  signature: "TOLeozjr1bcZazbCr7dfLmjVhxR7gxYNjqwYTGWslQeUxm0ohV/hh/zGYMCwfsKjoEb4fqR1EPKQUZgSOuMqFA=="
+----
+
+For example use cases you should check the integration tests.
 
 === License
 ifdef::env-name[:relfilesuffix: .adoc]

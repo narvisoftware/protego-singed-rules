@@ -9,6 +9,6 @@ echo Script is located in: $SCRIPT_DIR
 
 cd "$SCRIPT_DIR"
 
-mvn clean package exec:java -Dexec.args="$RUN_DIR" -X
+mvn clean package exec:java -Dexec.args="$RUN_DIR"
 
 cd  "$RUN_DIR"

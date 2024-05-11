@@ -1,4 +1,4 @@
-package app.narvi.authz.rules;
+package app.narvi.authz.rules.allownothing;
 
 import static app.narvi.authz.CrudAction.READ;
 
@@ -7,14 +7,15 @@ import app.narvi.authz.Permission;
 import app.narvi.authz.PolicyEvaluator;
 import app.narvi.authz.PolicyException;
 import app.narvi.authz.PolicyRulesProvider;
+import app.narvi.authz.rules.BasicPolicyRuleProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PolicyRulesTest {
+public class AllowNothingTest {
 
 
   @Test
-  public void permitAllTest() {
+  public void denyAllTest() {
     PolicyRulesProvider policyRulesProvider = new BasicPolicyRuleProvider();
     PolicyEvaluator.registerProviders(policyRulesProvider);
     FakePermission dummyPermission = new FakePermission(READ, new Object());

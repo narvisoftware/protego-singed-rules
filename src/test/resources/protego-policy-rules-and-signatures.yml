@@ -1,9 +1,0 @@
-# thins key must be present
-publicKey: >-
-  MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJW2DQAcahQ1MpNCRDR4wBFn+hGwUQ3K5DgIepusbC6r6tw3m5xUc54UttWwQCpxLwCfuN7aR6VXLuPghpKHEfkCAwEAAQ==
-# also class/signature keys must be present
-policyRuleCofigurations:
-- className: app.narvi.authz.rules.AllowNothingPolicyRule
-  signature: R/Uif8JOkDOCafzAqlGl6SG6JZzWueSaS46MomKF8Lvsu3KL5RdlNpVpmtUcgpfvSD1Jd0cPjqwEFGwbb3MEIQ==
-- className: app.narvi.authz.rules.TestNotPermitRule
-  signature: TOLeozjr1bcZazbCr7dfLmjVhxR7gxYNjqwYTGWslQeUxm0ohV/hh/zGYMCwfsKjoEb4fqR1EPKQUZgSOuMqFA==

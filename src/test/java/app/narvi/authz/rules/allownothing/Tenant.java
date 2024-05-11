@@ -1,4 +1,4 @@
-package app.narvi.authz.rules;
+package app.narvi.authz.rules.allownothing;
 
 import java.util.UUID;
 

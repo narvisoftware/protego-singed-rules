@@ -1,4 +1,4 @@
-package app.narvi.authz.rules;
+package app.narvi.authz.rules.doctor;
 
 import static app.narvi.authz.PolicyRule.Decision.PERMIT;
 import static app.narvi.authz.PolicyRule.Decision.WITHHOLD;
@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import app.narvi.authz.CrudAction;
 import app.narvi.authz.Permission;
 import app.narvi.authz.PolicyRule;
+import app.narvi.authz.rules.allownothing.User;
 
 public class AllowSameBranchPolicyRule implements PolicyRule {
 

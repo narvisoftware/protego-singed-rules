@@ -93,7 +93,7 @@ public class CreateSignature {
 
     KeySpec keySpec = new X509EncodedKeySpec(decoded);
 
-    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
     PublicKey publicKey = keyFactory.generatePublic(keySpec);
 
     final Cipher cipher2 = Cipher.getInstance("RSA/ECB/PKCS1Padding");

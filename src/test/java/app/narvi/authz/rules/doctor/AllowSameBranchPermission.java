@@ -1,4 +1,4 @@
-package app.narvi.authz.rules;
+package app.narvi.authz.rules.doctor;
 
 import app.narvi.authz.Permission;
 
@@ -7,10 +7,6 @@ public class AllowSameBranchPermission<CrudAction, PacientRecord> extends Permis
 
   public AllowSameBranchPermission(Object action, Object protectedResource) {
     super(action, protectedResource);
-  }
-
-  public static class PacientRecord {
-
   }
 
 }
