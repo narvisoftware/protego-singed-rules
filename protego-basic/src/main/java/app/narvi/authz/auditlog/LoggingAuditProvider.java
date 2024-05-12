@@ -5,7 +5,6 @@ import java.lang.invoke.MethodHandles;
 import app.narvi.authz.AuditProvider;
 import app.narvi.authz.Permission;
 import app.narvi.authz.PolicyRule;
-import app.narvi.authz.PolicyRule.Decision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

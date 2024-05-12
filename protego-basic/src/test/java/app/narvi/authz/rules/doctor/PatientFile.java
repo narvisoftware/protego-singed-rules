@@ -1,7 +1,7 @@
 package app.narvi.authz.rules.doctor;
 
-import app.narvi.authz.rules.allownothing.Tenant;
-import app.narvi.authz.rules.allownothing.User;
+import app.narvi.authz.rules.sametenant.Tenant;
+import app.narvi.authz.rules.sametenant.User;
 
 public class PatientFile {
   Tenant tenantClinic;
