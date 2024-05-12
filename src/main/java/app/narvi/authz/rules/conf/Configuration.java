@@ -13,10 +13,10 @@ public class Configuration {
   private String publicKey;
   private List<PolicyRuleCofiguration> policyRuleCofigurations = new ArrayList<>();
 
-  private static final String SIGNATURES_FILE_NAME = "protego-policy-rules-and-signatures.yml";
-  private static final String FILE_NAME_PROPERTY = "policyRulesFileName";
+  private static final String SIGNATURES_FILE_NAME = "protego-policy-rules-and-signatures.yaml";
+  public static final String FILE_NAME_PROPERTY = "policyRulesFileName";
 
-  private Configuration() {
+  protected Configuration() {
   }
 
   public static Configuration loadConfiguration() {
@@ -35,7 +35,7 @@ public class Configuration {
     return conf;
   }
 
-  private void validateSignatures() {
+  protected void validateSignatures() {
     for(PolicyRuleCofiguration aPolicyRuleConfig : policyRuleCofigurations) {
       aPolicyRuleConfig.verifySignature(publicKey.replaceAll("\s", ""));
     }

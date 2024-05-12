@@ -57,7 +57,7 @@ public class CreateSignature {
 
   private static final String ALGORITHM = "RSA";
 
-  private static final String SIGNATURES_FILE_NAME = "protego-policy-rules-and-signatures.yml";
+  private static final String SIGNATURES_FILE_NAME = "protego-policy-rules-and-signatures.yaml";
 
   String publicKeyString;
 

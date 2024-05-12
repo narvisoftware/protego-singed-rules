@@ -1,0 +1,9 @@
+# thins key must be present
+publicKey: >-
+  MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJW2DQAcahQ1MpNCRDR4wBFn+hGwUQ3K5DgIepusbC6r6tw3m5xUc54UttWwQCpxLwCfuN7aR6VXLuPghpKHEfkCAwEAAQ==
+# also class/signature keys must be present
+policyRuleCofigurations:
+- className: app.narvi.authz.rules.sametenant.AllowOwnTenantPolicyRule
+  signature: "W45fgRq51UrswPHjqJV/n1ZYXugOVJctx8xCWEZ1WItPK4+RlUuNrF3RPRvjHg61EzE5n4yGQu92T49fGvTWsQ=="
+- className: app.narvi.authz.rules.sametenant.PermitNothingPolicyRule
+  signature: "hZS0ZEtyu+odzqbHZfR88+dgv871oeJcJvXCxuBUfN6j8e0xcgT7bRhhUT4YN2wHsRbhyQm7qP6qDNgsIZlVvg=="

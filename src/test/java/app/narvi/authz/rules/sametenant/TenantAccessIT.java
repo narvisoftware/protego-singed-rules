@@ -2,6 +2,7 @@ package app.narvi.authz.rules.sametenant;
 
 import static app.narvi.authz.CrudAction.READ;
 import static app.narvi.authz.CrudAction.UPDATE;
+import static app.narvi.authz.rules.conf.Configuration.FILE_NAME_PROPERTY;
 import static app.narvi.authz.rules.sametenant.User.Role.PATIENT;
 import static app.narvi.test.TestExecutionSteps.TestSteps.AND_GIVEN_;
 import static app.narvi.test.TestExecutionSteps.TestSteps.GIVEN_;
@@ -13,6 +14,7 @@ import app.narvi.authz.PolicyEvaluator;
 import app.narvi.authz.PolicyException;
 import app.narvi.authz.PolicyRulesProvider;
 import app.narvi.authz.rules.BasicPolicyRuleProvider;
+import app.narvi.authz.rules.conf.Configuration;
 import app.narvi.authz.rules.sametenant.User.Role;
 import app.narvi.test.TestExecutionSteps.Scenario;
 import org.junit.jupiter.api.Assertions;
@@ -22,7 +24,10 @@ public class TenantAccessIT {
 
   @Scenario("User can have full access to his own tenant resources.")
   public void allowOwnTenant() {
-    GIVEN_("The framework is initialized");
+    GIVEN_("Using cutom policy rules configuration file.");
+    System.setProperty(FILE_NAME_PROPERTY, "app/narvi/authz/rules/sametenant/allow-same-tenant-policy-rules.yaml");
+
+    AND_GIVEN_("The framework is initialized");
     PolicyRulesProvider policyRulesProvider = new BasicPolicyRuleProvider();
     PolicyEvaluator.registerProviders(policyRulesProvider);
 
