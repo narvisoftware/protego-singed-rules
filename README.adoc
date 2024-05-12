@@ -25,7 +25,7 @@ From the bytecode is extracted the 8 bytes header (CAFE BABE + 4 bytes containin
 ** `publicKey.pub` - public key,
 ** `key.pkcs8` - public+private key pair)
 
-*  Create a file named `allow-same-tenant-policy-rules.yml` in the project's root (the project that use the protego framework).
+*  Create a file named `protego-policy-rules-and-signatures.yml` in the project's root (the project that use the protego framework).
 The file must have the key `publicKey` in the root and another key named `policyRuleCofigurations` which is a list of policy rule classes toghether with theirs signatures (`className` amd `signature`).
 You can copy this file content:
 [source,yaml]
