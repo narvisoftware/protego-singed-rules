@@ -1,6 +1,17 @@
 = Protego Basic
 :icons: font
 
+image::https://badgers.space/badge/foo/Warning/red?icon=feather-alert-triangle&scale=1.4&label=&label_color=orange[]
+[IMPORTANT]
+.Work in progress
+====
+TODO:
+
+- create javadoc for public API
+- full coverage with unit tests
+- create release (for jitpack.io) and publish it to maven central
+====
+
 This an implementation of the API from https://github.com/narvisoftware/protego-core[protego-core].
 It focuses on the security aspect of the poly rules.
 Meaning that it tries to prevent loading of unwanted rules, changing the existing rules or adding rules trough reflection.
