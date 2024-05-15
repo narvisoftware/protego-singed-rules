@@ -1,7 +1,5 @@
 package app.narvi.authz.rules.conf;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

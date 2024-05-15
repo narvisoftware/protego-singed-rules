@@ -1,6 +1,5 @@
 package app.narvi.authz.rules;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

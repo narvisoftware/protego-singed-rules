@@ -1,4 +1,4 @@
-package app.narvi.test;
+package app.narvi.authz.rules;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

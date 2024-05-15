@@ -1,11 +1,9 @@
 package app.narvi.authz.rules.conf;
 
 import java.lang.invoke.MethodHandles;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PublicKey;
-import java.security.SignatureException;
 import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
@@ -59,7 +57,7 @@ public class PolicyRuleCofiguration {
     try {
 
       String unencryptedHash = getClassHash();
-      LOG.debug(STR."Class bytecode hash: \{unencryptedHash}");
+      LOG.debug("Class bytecode hash: " + unencryptedHash);
 
       byte[] decodedPubKeyBytes = Base64.getDecoder().decode(publicKeyAsString);
       KeySpec keySpec = new X509EncodedKeySpec(decodedPubKeyBytes);
@@ -71,17 +69,17 @@ public class PolicyRuleCofiguration {
       cipher2.init(Cipher.DECRYPT_MODE, publicKey);
 
       byte[] encryptedMessageHash = Base64.getDecoder().decode(signature);
-      LOG.debug(STR."Signature: \{signature}");
+      LOG.debug("Signature: " + signature);
 
       byte[] decrypted = cipher2.doFinal(encryptedMessageHash);
 
       String decryptedSignature = Base64.getEncoder().encodeToString(decrypted);
-      LOG.debug(STR."Decrypted signature: \{decryptedSignature}");
+      LOG.debug("Decrypted signature: " + decryptedSignature);
 
       if (!decryptedSignature.equals(unencryptedHash)) {
         throw new SignatureUnmatchException("signature does not match!");
       } else {
-        LOG.debug(STR."Signature match: \{decryptedSignature} = \{unencryptedHash}");
+        LOG.debug("Signature match: " + decryptedSignature + " = "  + unencryptedHash);
       }
     } catch (Exception e) {
       throw new SignatureUnmatchException("Something went wrong while verifying signature.", e);

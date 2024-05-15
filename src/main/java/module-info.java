@@ -8,7 +8,6 @@ module app.narvi.protego.basic {
   requires org.yaml.snakeyaml;
 
   exports app.narvi.authz.rules;
-  exports app.narvi.authz.rules.conf;
 
   opens app.narvi.authz.rules.conf to org.yaml.snakeyaml;
 
