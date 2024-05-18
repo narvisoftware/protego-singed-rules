@@ -77,7 +77,7 @@ public class CreateSignature {
     PolicyRuleCofiguration policyRuleCofiguration = new PolicyRuleCofiguration(classNameToSign);
     byte[] classHash = Base64.getDecoder().decode(policyRuleCofiguration.getClassHash());
 
-    byte[] privateKeyBytes = Files.readAllBytes(Paths.get("temp/key.pkcs8"));
+    byte[] privateKeyBytes = Files.readAllBytes(Paths.get("temp/private-der.pkcs8"));
 
     PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
     KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
@@ -110,7 +110,7 @@ public class CreateSignature {
   }
 
   private void loadPublicKey() throws Exception {
-    byte[] pubKeyBytes = Files.readAllBytes(Paths.get("temp/publicKey.pub"));
+    byte[] pubKeyBytes = Files.readAllBytes(Paths.get("temp/public.pem"));
     publicKeyString = new String(pubKeyBytes, StandardCharsets.UTF_8);
     publicKeyString = publicKeyString.replaceAll(NEW_LINE_CHARACTER, EMPTY_STRING)
         .replaceAll(PUBLIC_KEY_START_KEY_STRING, EMPTY_STRING)

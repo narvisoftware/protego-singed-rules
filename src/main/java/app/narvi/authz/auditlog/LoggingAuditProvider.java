@@ -1,5 +1,7 @@
 package app.narvi.authz.auditlog;
 
+import static app.narvi.authz.AuditProvider.Decision.PERMIT;
+
 import java.lang.invoke.MethodHandles;
 
 import app.narvi.authz.AuditProvider;
@@ -15,8 +17,11 @@ public class LoggingAuditProvider implements AuditProvider {
 
   @Override
   public void audit(Permission permission, PolicyRule policyRule, Decision decision) {
-    LOG.info("Audit: Rule " + policyRule.getClass() + " result:" + decision.name() + " for " + permission.getClass()
+    LOG.debug("Audit: Rule " + policyRule.getClass() + " result:" + decision.name() + " for " + permission.getClass()
         .getSimpleName());
+    if(decision == PERMIT) {
+      LOG.info(permission.getAction() + " action attempt to " + permission.getProtectedResource());
+    }
   }
 
 }

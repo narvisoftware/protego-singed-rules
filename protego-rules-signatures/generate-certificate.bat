@@ -15,9 +15,9 @@ rm key.pem
 rm key.pkcs8
 rm publicKey.pub
 
-openssl genrsa -out key.pem 512
-openssl pkcs8 -topk8 -in key.pem -nocrypt -outform DER -out key.pkcs8
-openssl rsa -in key.pem -pubout > publicKey.pub
+openssl genrsa -out private.pem 512
+openssl pkcs8 -topk8 -in private.pem -nocrypt -outform DER -out private-der.pkcs8
+openssl rsa -in private.pem -pubout -outform PEM -out public.pem
 
 cd ..
 endlocal
