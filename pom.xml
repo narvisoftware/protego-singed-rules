@@ -271,9 +271,6 @@
           </includes>
           <classesDirectory>${project.build.outputDirectory}</classesDirectory>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
-<!--          <argLine>-->
-<!--            &#45;&#45;add-exports app.narvi.protego.basic/exports app.narvi.test=ALL-UNNAMED-->
-<!--          </argLine>-->
         </configuration>
       </plugin>
 

@@ -63,7 +63,7 @@ public class CreateSignature {
 
   public static void main(String[] args) throws Exception {
     if (args.length == 0 || args[0].isBlank()) {
-      System.err.println(
+      LOG.error(
           "Invalid usage: pass the folder location of " + SIGNATURES_FILE_NAME + " as the first parameter.");
       System.exit(-1);
     }

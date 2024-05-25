@@ -49,9 +49,8 @@ public class ScenarioDisplayNameGenerator implements DisplayNameGenerator {
       }
     }
     executedTestMethods.add(testMethod);
-    return "[" + executedTestMethods.size() + " of " + totalNumberOfMethods + "]" +
-        testMethod.getAnnotation(Scenario.class).value() +
-        " (" + testMethod.getName() + "())";
+    return STR."[\{executedTestMethods.size()} of \{totalNumberOfMethods}]\{
+        testMethod.getAnnotation(Scenario.class).value()} (\{testMethod.getName()}())";
 
   }
 

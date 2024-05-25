@@ -17,10 +17,10 @@ public class LoggingAuditProvider implements AuditProvider {
 
   @Override
   public void audit(Permission permission, PolicyRule policyRule, Decision decision) {
-    LOG.debug("Audit: Rule " + policyRule.getClass() + " result:" + decision.name() + " for " + permission.getClass()
-        .getSimpleName());
+    LOG.debug(STR."Audit: Rule \{policyRule.getClass()} result:\{decision.name()} for \{
+        permission.getClass().getSimpleName()}");
     if(decision == PERMIT) {
-      LOG.info(permission.getAction() + " action attempt to " + permission.getProtectedResource());
+      LOG.info(STR."\{permission.getAction()} action attempt to \{permission.getProtectedResource()}");
     }
   }
 
