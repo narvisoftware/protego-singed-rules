@@ -71,7 +71,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
 
     <testResources>
@@ -259,8 +259,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
         <configuration>
-          <!-- Activate the use of TCP to transmit events to the plugin -->
-<!--          <forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory"/>-->
           <argLine>${surefire.jacoco.args} --enable-preview</argLine>
           <trimStackTrace>false</trimStackTrace>
           <excludes>
@@ -279,6 +277,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
+<!--          <reuseForks>false</reuseForks>-->
           <argLine>${failsafe.jacoco.args} --enable-preview</argLine>
           <trimStackTrace>false</trimStackTrace>
           <excludes>
@@ -309,5 +308,5 @@
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
-  
+
 </project>
