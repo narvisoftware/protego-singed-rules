@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class TenantResource {
+
   private String id;
   private Tenant tenantOwner;
 

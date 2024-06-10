@@ -9,10 +9,11 @@ public class AllowOwnTenantPolicyRule implements PolicyRule {
 
   @Override
   public boolean hasPermisssion(Permission permission) {
-    if(! (permission instanceof TenantAccessPermission)) {
+    if (!(permission instanceof TenantAccessPermission)) {
       return false;
     }
     User authenticatedUser = AUTHENTICATED_USER.get();
-    return ((TenantAccessPermission)permission).getProtectedResource().getTenantOwner().equals(authenticatedUser.getTenantOwner());
+    return ((TenantAccessPermission) permission).getProtectedResource().getTenantOwner()
+        .equals(authenticatedUser.getTenantOwner());
   }
 }

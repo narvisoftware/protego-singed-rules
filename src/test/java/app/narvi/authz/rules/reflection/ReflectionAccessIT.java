@@ -1,11 +1,8 @@
 package app.narvi.authz.rules.reflection;
 
 import static app.narvi.authz.CrudAction.UPDATE;
-import static app.narvi.authz.rules.TestExecutionSteps.TestSteps.AND_GIVEN_;
-import static app.narvi.authz.rules.TestExecutionSteps.TestSteps.GIVEN_;
 import static app.narvi.authz.rules.TestExecutionSteps.TestSteps.THEN_;
 import static app.narvi.authz.rules.TestExecutionSteps.TestSteps.WHEN_;
-import static app.narvi.authz.rules.conf.Configuration.FILE_NAME_PROPERTY;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
@@ -17,8 +14,6 @@ import org.junit.jupiter.api.Assertions;
 import app.narvi.authz.Permission;
 import app.narvi.authz.PolicyEvaluator;
 import app.narvi.authz.PolicyRule;
-import app.narvi.authz.PolicyRulesProvider;
-import app.narvi.authz.rules.BasicPolicyRuleProvider;
 import app.narvi.authz.rules.Test;
 import app.narvi.authz.rules.TestExecutionSteps.Scenario;
 import app.narvi.authz.rules.sametenant.TenantAccessPermission;

@@ -1,9 +1,6 @@
 package app.narvi.authz.rules.sametenant;
 
-import java.util.Objects;
-import java.util.UUID;
-
-public class SomeResource extends TenantResource{
+public class SomeResource extends TenantResource {
 
   private String name;
 

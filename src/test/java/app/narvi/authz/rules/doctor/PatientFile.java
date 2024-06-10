@@ -4,6 +4,7 @@ import app.narvi.authz.rules.sametenant.Tenant;
 import app.narvi.authz.rules.sametenant.User;
 
 public class PatientFile {
+
   Tenant tenantClinic;
   User patient;
   String diagnosticHistory;

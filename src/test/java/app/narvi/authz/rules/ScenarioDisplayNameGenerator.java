@@ -6,10 +6,11 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import app.narvi.authz.rules.TestExecutionSteps.Scenario;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.platform.commons.util.ClassUtils;
 import org.junit.platform.commons.util.Preconditions;
+
+import app.narvi.authz.rules.TestExecutionSteps.Scenario;
 
 public class ScenarioDisplayNameGenerator implements DisplayNameGenerator {
 

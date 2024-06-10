@@ -1,12 +1,12 @@
 package app.narvi.authz.rules.conf;
 
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 public class Configuration {
 
@@ -23,7 +23,7 @@ public class Configuration {
     Yaml yaml = new Yaml(new Constructor(Configuration.class, new LoaderOptions()));
 
     InputStream inputStream;
-    if(System.getProperty(FILE_NAME_PROPERTY) == null) {
+    if (System.getProperty(FILE_NAME_PROPERTY) == null) {
       inputStream = Configuration.class.getClassLoader().getResourceAsStream(SIGNATURES_FILE_NAME);
     } else {
       inputStream = Configuration.class.getClassLoader().getResourceAsStream(System.getProperty(FILE_NAME_PROPERTY));
@@ -36,7 +36,7 @@ public class Configuration {
   }
 
   protected void validateSignatures() {
-    for(PolicyRuleCofiguration aPolicyRuleConfig : policyRuleCofigurations) {
+    for (PolicyRuleCofiguration aPolicyRuleConfig : policyRuleCofigurations) {
       aPolicyRuleConfig.verifySignature(publicKey.replaceAll("\s", ""));
     }
   }

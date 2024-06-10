@@ -28,7 +28,7 @@ public class BasicPolicyRuleProvider implements PolicyRulesProvider {
       Configuration configuration = Configuration.loadConfiguration();
       for (PolicyRuleCofiguration aPolicyRuleConf : configuration.getPolicyRuleCofigurations()) {
         Class aPolicyClass = Class.forName(aPolicyRuleConf.getClassName());
-        policyRules.add((PolicyRule)aPolicyClass.getConstructor().newInstance());
+        policyRules.add((PolicyRule) aPolicyClass.getConstructor().newInstance());
       }
     } catch (Exception e) {
       throw new RuntimeException("Cannot load policy rules.", e);

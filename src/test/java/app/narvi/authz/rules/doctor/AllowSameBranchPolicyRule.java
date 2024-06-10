@@ -2,14 +2,10 @@ package app.narvi.authz.rules.doctor;
 
 import static app.narvi.authz.rules.sametenant.User.Role.DOCTOR;
 
-import java.time.Instant;
-import java.time.LocalDate;
-
 import app.narvi.authz.CrudAction;
 import app.narvi.authz.Permission;
 import app.narvi.authz.PolicyRule;
 import app.narvi.authz.rules.sametenant.User;
-import app.narvi.authz.rules.sametenant.User.Role;
 
 public class AllowSameBranchPolicyRule implements PolicyRule {
 
