@@ -7,7 +7,7 @@
 
   <groupId>app.narvi</groupId>
   <artifactId>protego-basic</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.8-SNAPSHOT</version>
 
   <properties>
     <maven.compiler.source>22</maven.compiler.source>
@@ -36,7 +36,7 @@
     <dependency>
       <groupId>app.narvi</groupId>
       <artifactId>protego-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.8-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -92,6 +92,34 @@
     </testResources>
 
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.7.0</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -280,7 +308,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>3.2.5</version>
         <configuration>
-<!--          <reuseForks>false</reuseForks>-->
+          <!--          <reuseForks>false</reuseForks>-->
           <argLine>${failsafe.jacoco.args} --enable-preview</argLine>
           <trimStackTrace>false</trimStackTrace>
           <excludes>
@@ -302,8 +330,46 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.7.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.2.4</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
   <repositories>
     <repository>
