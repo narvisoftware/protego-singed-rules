@@ -9,6 +9,7 @@ import static app.narvi.authz.rules.conf.Configuration.FILE_NAME_PROPERTY;
 import static app.narvi.authz.rules.sametenant.User.Role.PATIENT;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
 
 import app.narvi.authz.PolicyEvaluator;
 import app.narvi.authz.PolicyRulesProvider;
@@ -16,6 +17,7 @@ import app.narvi.authz.rules.BasicPolicyRuleProvider;
 import app.narvi.authz.rules.Test;
 import app.narvi.authz.rules.TestExecutionSteps.Scenario;
 
+@Order(1)
 public class TenantAccessIT extends Test {
 
   @Scenario("User can have full access to his own tenant resources.")

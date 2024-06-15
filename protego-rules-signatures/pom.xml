@@ -20,12 +20,12 @@
     <dependency>
       <groupId>app.narvi</groupId>
       <artifactId>protego-basic</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.8</version>
     </dependency>
     <dependency>
       <groupId>app.narvi</groupId>
       <artifactId>protego-basic</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>0.8</version>
       <type>test-jar</type>
     </dependency>
 <!--    <dependency>-->

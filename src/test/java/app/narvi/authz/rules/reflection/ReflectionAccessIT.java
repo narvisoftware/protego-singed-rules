@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
 
 import app.narvi.authz.Permission;
 import app.narvi.authz.PolicyEvaluator;
@@ -18,6 +19,7 @@ import app.narvi.authz.rules.Test;
 import app.narvi.authz.rules.TestExecutionSteps.Scenario;
 import app.narvi.authz.rules.sametenant.TenantAccessPermission;
 
+@Order(2)
 public class ReflectionAccessIT extends Test {
 
   @Scenario("Reflection to protego-core is forbidden by java modules system.")
