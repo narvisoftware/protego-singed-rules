@@ -15,9 +15,9 @@ esac
 mkdir temp
 cd temp
 
-rm key.pem
-rm key.pkcs8
-rm publicKey.pub
+del /f key.pem
+del /f key.pkcs8
+del /f publicKey.pub
 
 openssl genrsa -out private.pem 512
 openssl pkcs8 -topk8 -in private.pem -nocrypt -outform DER -out private-der.pkcs8

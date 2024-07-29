@@ -73,20 +73,33 @@ public class CreateSignature {
     createSignature.modifySignaturesFile(args[0].trim());
   }
 
+  public void encryptAndDecrypt(String toEncrypt) throws Exception {
+    LOG.debug("Original string: " + toEncrypt);
+    byte[] encrypted = encrypt(toEncrypt.getBytes(StandardCharsets.UTF_8));
+    LOG.debug("Ecrypted: " + Base64.getEncoder().encodeToString(encrypted));
+    byte[] decrypted = decrypt(encrypted);
+    LOG.debug("Decrypted: " + new String(decrypted, StandardCharsets.UTF_8));
+  }
+
   private String getSignature(String classNameToSign) throws Exception {
+
     PolicyRuleCofiguration policyRuleCofiguration = new PolicyRuleCofiguration(classNameToSign);
     byte[] classHash = Base64.getDecoder().decode(policyRuleCofiguration.getClassHash());
 
-    byte[] privateKeyBytes = Files.readAllBytes(Paths.get("temp/private-der.pkcs8"));
+    byte[] encryptedMessageHash = encrypt(classHash);
 
-    PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
-    KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
-    RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) kf.generatePrivate(privateKeySpec);
+    byte[] decrypted = decrypt(encryptedMessageHash);
 
-    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-    cipher.init(Cipher.ENCRYPT_MODE, rsaPrivateKey);
-    byte[] encryptedMessageHash = cipher.doFinal(classHash);
+    String signature = Base64.getEncoder().encodeToString(encryptedMessageHash);
 
+    assert Arrays.equals(decrypted, classHash) : "Something got wrong during signature creation";
+
+    LOG.debug("*******\nunecrypted signature:\n" + signature + "\n*******");
+
+    return signature;
+  }
+
+  public byte[] decrypt(byte[] encryptedMessageHash) throws Exception {
     byte[] decoded = Base64
         .getDecoder()
         .decode(publicKeyString);
@@ -99,17 +112,22 @@ public class CreateSignature {
     final Cipher cipher2 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
     cipher2.init(Cipher.DECRYPT_MODE, publicKey);
 
-    byte[] decrypted = cipher2.doFinal(encryptedMessageHash);
-    String signature = Base64.getEncoder().encodeToString(encryptedMessageHash);
-
-    assert Arrays.equals(decrypted, classHash) : "Something got wrong during signature creation";
-
-    LOG.debug("*******\nencrypted signature:\n" + signature + "\n*******");
-
-    return signature;
+    return cipher2.doFinal(encryptedMessageHash);
   }
 
-  private void loadPublicKey() throws Exception {
+  public byte[] encrypt(byte[] input) throws Exception {
+    byte[] privateKeyBytes = Files.readAllBytes(Paths.get("temp/private-der.pkcs8"));
+
+    PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+    KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
+    RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) kf.generatePrivate(privateKeySpec);
+
+    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+    cipher.init(Cipher.ENCRYPT_MODE, rsaPrivateKey);
+    return cipher.doFinal(input);
+  }
+
+  public void loadPublicKey() throws Exception {
     byte[] pubKeyBytes = Files.readAllBytes(Paths.get("temp/public.pem"));
     publicKeyString = new String(pubKeyBytes, StandardCharsets.UTF_8);
     publicKeyString = publicKeyString.replaceAll(NEW_LINE_CHARACTER, EMPTY_STRING)

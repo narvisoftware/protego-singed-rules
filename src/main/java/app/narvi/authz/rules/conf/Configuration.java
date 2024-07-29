@@ -1,6 +1,8 @@
 package app.narvi.authz.rules.conf;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,13 @@ public class Configuration {
     conf.validateSignatures();
 
     return conf;
+  }
+
+  public static String decrypt(String input) throws Exception {
+    Configuration configuration = Configuration.loadConfiguration();
+    PolicyRuleCofiguration emptyRuleCofiguration = new PolicyRuleCofiguration();
+    byte[] decrypted = emptyRuleCofiguration.decrypt(configuration.publicKey.replaceAll("\s", ""), input);
+    return new String(decrypted, StandardCharsets.UTF_8);
   }
 
   protected void validateSignatures() {

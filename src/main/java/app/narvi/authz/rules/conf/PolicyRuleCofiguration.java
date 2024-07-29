@@ -58,21 +58,8 @@ public class PolicyRuleCofiguration {
       String unencryptedHash = getClassHash();
       LOG.debug(STR."Class bytecode hash: \{unencryptedHash}");
 
-      byte[] decodedPubKeyBytes = Base64.getDecoder().decode(publicKeyAsString);
-      KeySpec keySpec = new X509EncodedKeySpec(decodedPubKeyBytes);
-
-      KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
-      PublicKey publicKey = keyFactory.generatePublic(keySpec);
-
-      final Cipher cipher2 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-      cipher2.init(Cipher.DECRYPT_MODE, publicKey);
-
-      byte[] encryptedMessageHash = Base64.getDecoder().decode(signature);
-      LOG.debug(STR."Signature: \{signature}");
-
-      byte[] decrypted = cipher2.doFinal(encryptedMessageHash);
-
-      String decryptedSignature = Base64.getEncoder().encodeToString(decrypted);
+      byte[] decryptedAsBytes = decrypt(publicKeyAsString, signature);
+      String decryptedSignature =  Base64.getEncoder().encodeToString(decryptedAsBytes);
       LOG.debug(STR."Decrypted signature: \{decryptedSignature}");
 
       if (!decryptedSignature.equals(unencryptedHash)) {
@@ -83,6 +70,22 @@ public class PolicyRuleCofiguration {
     } catch (Exception e) {
       throw new SignatureUnmatchException("Something went wrong while verifying signature.", e);
     }
+  }
+
+  public byte[] decrypt(String publicKeyAsString, String input) throws Exception {
+    byte[] decodedPubKeyBytes = Base64.getDecoder().decode(publicKeyAsString);
+    KeySpec keySpec = new X509EncodedKeySpec(decodedPubKeyBytes);
+
+    KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
+    PublicKey publicKey = keyFactory.generatePublic(keySpec);
+
+    final Cipher cipher2 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+    cipher2.init(Cipher.DECRYPT_MODE, publicKey);
+
+    LOG.debug(STR."Signature: \{input}");
+    byte[] encryptedMessageHash = Base64.getDecoder().decode(input);
+
+    return cipher2.doFinal(encryptedMessageHash);
   }
 
   public String getClassHash() throws Exception {
