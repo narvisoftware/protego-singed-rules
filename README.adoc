@@ -1,4 +1,4 @@
-= Protego Basic
+= Protego Signed Rules
 :icons: font
 
 image::https://badgers.space/badge/foo/Warning/red?icon=feather-alert-triangle&scale=1.4&label=&label_color=orange[]
