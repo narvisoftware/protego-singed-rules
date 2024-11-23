@@ -19,12 +19,12 @@
     <!--dependencies to thr signed project!-->
     <dependency>
       <groupId>app.narvi</groupId>
-      <artifactId>protego-basic</artifactId>
+      <artifactId>protego-singed-rules</artifactId>
       <version>0.8</version>
     </dependency>
     <dependency>
       <groupId>app.narvi</groupId>
-      <artifactId>protego-basic</artifactId>
+      <artifactId>protego-singed-rules</artifactId>
       <version>0.8</version>
       <type>test-jar</type>
     </dependency>

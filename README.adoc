@@ -85,7 +85,7 @@ policyRuleCofigurations:
   - className: your.policy.OtherRuleClass
     signature: "<generate signture>"
 ----
-* Then, using a terminal, go to the folder where the `allow-same-tenant-policy-rules.yaml` file is located (for example `/home/user/protego-basic/src/test/resources/`).
+* Then, using a terminal, go to the folder where the `allow-same-tenant-policy-rules.yaml` file is located (for example `/home/user/protego-singed-rules/src/test/resources/`).
 From this folder run the `sign.sh` (or `.bat`) script. For example: `../../../protego-rules-signatures/sign.sh`. This will sign the policy classes and copy the public key to the yaml file.
 After that, the file should look something like this:
 [source,yaml]

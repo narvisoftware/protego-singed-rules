@@ -6,17 +6,17 @@
 
 
   <groupId>app.narvi</groupId>
-  <artifactId>protego-basic</artifactId>
+  <artifactId>protego-singed-rules</artifactId>
   <version>0.8</version>
 
   <description>Basic implementation of protego-core.</description>
-  <url>https://github.com/narvisoftware/protego-basic</url>
+  <url>https://github.com/narvisoftware/protego-singed-rules</url>
 
   <scm>
-    <connection>scm:git:https://github.com/narvisoftware/protego-basic.git</connection>
-    <developerConnection>scm:git:https://github.com/narvisoftware/protego-basic.git</developerConnection>
-    <tag>protego-basic-0.8</tag>
-    <url>https://github.com/narvisoftware/protego-basic/tree/main</url>
+    <connection>scm:git:https://github.com/narvisoftware/protego-singed-rules.git</connection>
+    <developerConnection>scm:git:https://github.com/narvisoftware/protego-singed-rules.git</developerConnection>
+    <tag>protego-singed-rules-0.8</tag>
+    <url>https://github.com/narvisoftware/protego-singed-rules/tree/main</url>
   </scm>
 
   <developers>
