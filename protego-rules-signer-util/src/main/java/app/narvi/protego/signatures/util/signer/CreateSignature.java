@@ -28,7 +28,6 @@ import java.util.Deque;
 import java.util.List;
 import javax.crypto.Cipher;
 
-import app.narvi.authz.rules.conf.PolicyRuleCofiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
@@ -44,6 +43,8 @@ import org.yaml.snakeyaml.events.Event.ID;
 import org.yaml.snakeyaml.events.ScalarEvent;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.representer.Representer;
+
+import app.narvi.protego.signatures.rules.conf.PolicyRuleCofiguration;
 
 public class CreateSignature {
 

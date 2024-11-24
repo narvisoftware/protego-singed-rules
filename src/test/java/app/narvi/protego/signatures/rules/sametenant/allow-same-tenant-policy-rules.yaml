@@ -1,9 +1,8 @@
 # thins key must be present
-publicKey: >-
-  MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANKi7L0pR3JFU++JnPfNyHSopQKwfhIl6gWXqvYvrYhNG0Tfa6XBIvzGDxANhMYTrCQEFclNZ5VI+lRSJMkpmCUCAwEAAQ==
+publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJuvI3IqeKHnjykZSFxSQwtjed/9z9TjRmayJY/nAudl+KPLGVc3SwlVJFG4Y0iMD2mHoXdVZPGqm1trS4BYq7cCAwEAAQ==
 # also class/signature keys must be present
 policyRuleCofigurations:
-- className: app.narvi.authz.rules.sametenant.AllowOwnTenantPolicyRule
-  signature: X5gbBnNnwk1gkenhbA5eSQ+rGbcF0JP1MLm0b8m8DeTt5mRX2nCf0dFMu6qtBLQkE+tFEHIEqqQr73V/6z6cEw==
-- className: app.narvi.authz.rules.sametenant.PermitNothingPolicyRule
-  signature: DFPwYXYuVdzNG6ssovxPUfQCj4XOPvWMVK+Zt+9YoEr4CHu13qQEt6xqv/aQuuFM24O/wrOeKKwi89dmy3JpkA==
+- className: app.narvi.protego.signatures.rules.sametenant.AllowOwnTenantPolicyRule
+  signature: YZz6nSp8zsU/9UeyujKlcTbAvDvjkhfFhRH/ixLm4jn8mIk1krxeKyI43JF6hDNo3Ajsr/6AYcXsxLS4ukdUuA==
+- className: app.narvi.protego.signatures.rules.sametenant.PermitNothingPolicyRule
+  signature: PudT1FyhanHC6mLe6jSTczE5zqLNh2cHSi468iAmJ++UrxHsrJDZ72q7tyOgLmmYfk52uIz+KP6c8RIVgys63A==

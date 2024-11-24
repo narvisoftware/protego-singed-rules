@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import app.narvi.authz.PolicyRule;
-import app.narvi.authz.PolicyRulesProvider;
+import app.narvi.protego.PolicyRule;
+import app.narvi.protego.PolicyRulesProvider;
 import app.narvi.protego.signatures.rules.conf.Configuration;
 import app.narvi.protego.signatures.rules.conf.PolicyRuleCofiguration;
 
-public class BasicPolicyRuleProvider implements PolicyRulesProvider {
+public class SignedPolicyRuleProvider implements PolicyRulesProvider {
 
   private final List<PolicyRule> policyRules = new ArrayList<>();
 
-  public BasicPolicyRuleProvider() {
+  public SignedPolicyRuleProvider() {
     verifyPolicyRulesSignatures();
   }
 

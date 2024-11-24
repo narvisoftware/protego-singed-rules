@@ -2,8 +2,8 @@ package app.narvi.protego.signatures.rules.sametenant;
 
 import static app.narvi.protego.signatures.rules.sametenant.User.AUTHENTICATED_USER;
 
-import app.narvi.authz.Permission;
-import app.narvi.authz.PolicyRule;
+import app.narvi.protego.Permission;
+import app.narvi.protego.PolicyRule;
 
 public class AllowOwnTenantPolicyRule implements PolicyRule {
 

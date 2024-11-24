@@ -12,7 +12,7 @@ public class User {
   private Role role;
   private Tenant tenantOwner;
 
-  public static enum Role {
+  public enum Role {
     PATIENT,
     DOCTOR
   }

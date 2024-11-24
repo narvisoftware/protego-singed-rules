@@ -1,6 +1,6 @@
 package app.narvi.protego.signatures.rules.sametenant;
 
-import static app.narvi.authz.CrudAction.UPDATE;
+import static app.narvi.protego.CrudAction.UPDATE;
 import static app.narvi.protego.signatures.rules.TestExecutionSteps.TestSteps.AND_GIVEN_;
 import static app.narvi.protego.signatures.rules.TestExecutionSteps.TestSteps.GIVEN_;
 import static app.narvi.protego.signatures.rules.TestExecutionSteps.TestSteps.THEN_;
@@ -9,9 +9,9 @@ import static app.narvi.protego.signatures.rules.TestExecutionSteps.TestSteps.WH
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
 
-import app.narvi.authz.PolicyEvaluator;
-import app.narvi.authz.PolicyRulesProvider;
-import app.narvi.protego.signatures.rules.BasicPolicyRuleProvider;
+import app.narvi.protego.PolicyEvaluator;
+import app.narvi.protego.PolicyRulesProvider;
+import app.narvi.protego.signatures.rules.SignedPolicyRuleProvider;
 import app.narvi.protego.signatures.rules.Test;
 import app.narvi.protego.signatures.rules.TestExecutionSteps.Scenario;
 import app.narvi.protego.signatures.rules.conf.Configuration;
@@ -27,7 +27,7 @@ public class TenantAccessIT extends Test {
         "app/narvi/protego/signatures/rules/sametenant/allow-same-tenant-policy-rules.yaml");
 
     AND_GIVEN_("The framework is initialized");
-    PolicyRulesProvider policyRulesProvider = new BasicPolicyRuleProvider();
+    PolicyRulesProvider policyRulesProvider = new SignedPolicyRuleProvider();
     PolicyEvaluator.registerProviders(policyRulesProvider);
 
     AND_GIVEN_("The user is authenticated");

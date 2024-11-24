@@ -1,7 +1,7 @@
 package app.narvi.protego.signatures.rules.sametenant;
 
-import app.narvi.authz.Permission;
-import app.narvi.authz.PolicyRule;
+import app.narvi.protego.Permission;
+import app.narvi.protego.PolicyRule;
 
 public class PermitNothingPolicyRule implements PolicyRule {
 

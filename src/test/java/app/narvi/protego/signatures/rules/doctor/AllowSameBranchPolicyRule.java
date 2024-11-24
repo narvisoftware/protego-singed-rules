@@ -1,8 +1,10 @@
 package app.narvi.protego.signatures.rules.doctor;
 
-import app.narvi.authz.CrudAction;
-import app.narvi.authz.Permission;
-import app.narvi.authz.PolicyRule;
+import static app.narvi.protego.CrudAction.READ;
+
+import app.narvi.protego.CrudAction;
+import app.narvi.protego.Permission;
+import app.narvi.protego.PolicyRule;
 import app.narvi.protego.signatures.rules.sametenant.User;
 import app.narvi.protego.signatures.rules.sametenant.User.Role;
 
@@ -21,7 +23,7 @@ public class AllowSameBranchPolicyRule implements PolicyRule {
       return false;
     }
     // only read is allowed
-    if (permission.getAction() != CrudAction.READ) {
+    if (permission.getAction() != READ) {
       return false;
     }
 //    // has an appointment today

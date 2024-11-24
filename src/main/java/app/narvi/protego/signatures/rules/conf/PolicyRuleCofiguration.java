@@ -56,16 +56,16 @@ public class PolicyRuleCofiguration {
     try {
 
       String unencryptedHash = getClassHash();
-      LOG.debug(STR."Class bytecode hash: \{unencryptedHash}");
+      LOG.debug("Class bytecode hash: "+ unencryptedHash);
 
       byte[] decryptedAsBytes = decrypt(publicKeyAsString, signature);
       String decryptedSignature =  Base64.getEncoder().encodeToString(decryptedAsBytes);
-      LOG.debug(STR."Decrypted signature: \{decryptedSignature}");
+      LOG.debug("Decrypted signature: " + decryptedSignature);
 
       if (!decryptedSignature.equals(unencryptedHash)) {
         throw new SignatureUnmatchException("signature does not match!");
       } else {
-        LOG.debug(STR."Signature match: \{decryptedSignature} = \{unencryptedHash}");
+        LOG.debug("Signature match: " + decryptedSignature + " = " + unencryptedHash);
       }
     } catch (Exception e) {
       throw new SignatureUnmatchException("Something went wrong while verifying signature.", e);
@@ -82,7 +82,7 @@ public class PolicyRuleCofiguration {
     final Cipher cipher2 = Cipher.getInstance("RSA/ECB/PKCS1Padding");
     cipher2.init(Cipher.DECRYPT_MODE, publicKey);
 
-    LOG.debug(STR."Signature: \{input}");
+    LOG.debug("Signature: " + input);
     byte[] encryptedMessageHash = Base64.getDecoder().decode(input);
 
     return cipher2.doFinal(encryptedMessageHash);

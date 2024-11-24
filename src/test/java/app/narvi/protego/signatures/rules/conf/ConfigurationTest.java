@@ -12,7 +12,7 @@ class ConfigurationTest {
     conf.getPolicyRuleCofigurations()
         .add(
             new PolicyRuleCofiguration(
-                "app.narvi.authz.rules.sametenant.AllowOwnTenantPolicyRule",
+                "app.narvi.protego.signatures.rules.sametenant.AllowOwnTenantPolicyRule",
                 "dummy signature")
         );
     Throwable exception = Assertions.assertThrows(

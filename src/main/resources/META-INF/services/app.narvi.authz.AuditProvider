@@ -1,1 +1,1 @@
-app.narvi.protego.signatures.auditlog.LoggingAuditProvider
+app.narvi.protego.signatures.auditlog.SimpleLoggingAuditProvider
